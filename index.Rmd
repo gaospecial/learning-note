@@ -52,6 +52,8 @@ options(bookdown.post.latex = function(x) {
 })
 
 options(tinytex.verbose = TRUE)
+
+Sys.setenv(LANGUAGE = "en") #显示英文报错信息
 ```
 
 

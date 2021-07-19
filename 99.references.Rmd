@@ -6,7 +6,7 @@
 ```{r include=FALSE}
 # 自动生成 R 包的参考文献
 knitr::write_bib(c(
-  .packages(),
+  .packages()
 ), 'packages.bib')
 
 # lapply(pkgs, function(pkg) {
