@@ -1,0 +1,133 @@
+---
+title: "数据科学学习笔记"
+author: "高春辉"
+date: "`r Sys.Date()`"
+documentclass: ctexbook
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+site: bookdown::bookdown_site
+description: "高春辉的数据科学学习笔记"
+github-repo: cosname/rmarkdown-guide
+#cover-image: images/cover.jpg
+---
+
+# 前言 {-}
+
+```{r, setup, include=FALSE}
+if (knitr::is_html_output()) {
+  # ignore percentage widths for HTML output, unless they are used for multiple
+  # figures side by side
+  knitr::opts_hooks$set(out.width = function(options) {
+    if (options$fig.show != 'hold' && grepl('%$', options$out.width))
+      options$out.width = NULL
+    options
+  })
+}
+
+options(bookdown.post.latex = function(x) {
+  # substitute nonbreaking spaces in \texttt{} with normal spaces
+  m = gregexpr('\\\\texttt\\{[^}]+}', x)
+  regmatches(x, m) = lapply(regmatches(x, m), function(z) {
+    gsub('\\\\ ', ' ', z)
+  })
+
+  # fix syntax highlighting:
+  # \FunctionTok{tufte:}\AttributeTok{:tufte_html: default} ->
+  # \FunctionTok{tufte::tufte_html:}\AttributeTok{ default}
+  x = gsub('(\\\\AttributeTok\\{[^:]+:)(})(\\\\FunctionTok\\{)(:[^:]+:)', '\\1\\4\\2\\3', x)
+  if (length(i <- grep('^\\\\begin\\{longtable\\}', x)) == 0) return(x)
+  i1 = bookdown:::next_nearest(i, which(x == '\\toprule'))
+  i2 = bookdown:::next_nearest(i, which(x == '\\endfirsthead'))
+  x[i1 - 1] = paste0(x[i1 - 1], '\n\\begin{tabular}{', gsub('[^lcr]', '', gsub('.*\\[]', '', x[i])), '}')
+  x[i] = '\\begin{table}'
+  x[x == '\\end{longtable}'] = '\\end{tabular}\n\\end{table}'
+  x[x == '\\endhead'] = ''
+  x = x[-unlist(mapply(seq, i1, i2, SIMPLIFY = FALSE))]
+  x
+})
+
+options(tinytex.verbose = TRUE)
+```
+
+
+```{r example-helper, include=FALSE}
+import_example <- function(file, lang = xfun::file_ext(file)) {
+  x = xfun::read_utf8(xfun::magic_path(file))
+  lang = tolower(lang)
+  if (nchar(lang) > 1) {
+    lang = sub('^r', '', lang)
+    if (lang == 'nw') lang = 'tex'
+  }
+  knitr::asis_output(paste(c(sprintf("````%s", lang), x, "````"), collapse = '\n'))
+}
+
+import_example_result <- function(file, redo = FALSE, vwidth = 700, vheight = 400, ...){
+  file <- xfun::magic_path(file)
+  out <- rmarkdown::all_output_formats(file)
+  if (is.null(out)) out = "html_document"
+  if (length(out) == 1){
+    webshot <- xfun::with_ext(file, "png")
+  }
+  if (length(out) > 1){
+    webshot = xfun::with_ext(file, paste0(out,".png"))
+  }
+
+  if (all(xfun::file_exists(webshot))){ # if all output is exist
+    fail <- tryCatch(png::readPNG(file), error = function(x) TRUE)
+    outdate <- file.info(file)$mtime > file.info(webshot)$mtime
+    if (fail | outdate) redo <- TRUE
+  } else {
+    redo <- TRUE
+  }
+  if (redo){
+    for (i in 1:length(out)){
+      fmt = out[[i]]
+      outfile = webshot[[i]]
+
+      if (fmt %in% c("pdf_document","beamer_presentation"))
+        tryCatch(rmd_pdf_screenshot(file, fmt, outfile),
+                 error = function(e)paste0("Failed to process ", file))
+
+      if (fmt %in% c("html_document","ioslides_presentation","slidy_presentation"))
+        tryCatch(rmd_html_screenshot(file, fmt, outfile, vwidth=vwidth, vheight=vheight),
+                 error = function(e)paste0("Failed to process ", file))
+
+    }
+  }
+  tryCatch(knitr::include_graphics(webshot), error = function(e) paste0("unable to load png: ", webshot))
+}
+
+rmd_html_screenshot <- function(file, fmt = "html_document", outfile = xfun::with_ext(file, "png"), ...){
+  cmd <- sprintf("rmarkdown::render('%s', '%s', quiet = TRUE)", file, fmt)
+  ret <- xfun::Rscript(c("-e", shQuote(cmd)))
+  if (ret != 0) stop(simpleError("Knit to HTML failed for document: ", file))
+  url = xfun::with_ext(file, "html")
+  html_screenshot(url, outfile, ...)
+}
+
+html_screenshot <- function(url, outfile = xfun::with_ext(url,"png"), ...){
+  webshot::webshot(url, outfile, ...)
+  return(outfile)
+}
+
+rmd_pdf_screenshot <- function(file, fmt = "pdf_document", outfile = xfun::with_ext(file, "png")){
+  cmd <- sprintf("rmarkdown::render('%s', '%s', quiet = TRUE)", file, fmt)
+  ret <- xfun::Rscript(c("-e", shQuote(cmd)))
+  if (ret != 0) stop(simpleError("Knit to PDF failed for document: ", file))
+
+  pdf = xfun::with_ext(file, "pdf")
+  pdf_screenshot(pdf, outfile)
+
+}
+
+pdf_screenshot <- function(pdf, outfile = xfun::with_ext(pdf, "png")){
+  content = magick::image_read_pdf(pdf, pages = 1)
+  magick::image_write(content, outfile)
+  return(outfile)
+}
+```
