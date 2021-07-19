@@ -1,0 +1,163 @@
+# (PART) Vegan {.unnumbered}
+
+# Vegan 使用技巧
+
+> R package for community ecologists: popular ordination methods, ecological null models & diversity analysis
+
+**Vegan** 是面向研究群落的生态学家开发的软件包，包括了流行的坐标分析方法、生态学的零假设和多样性分析方法。
+
+```{r}
+library(vegan)
+```
+
+## 计算 beta-dispersion
+
+使用 `betadisper()` 计算。这是一个 beta-diversity （β多样性）指标。
+
+```{r eval=FALSE}
+example("betadisper")
+```
+
+`varespec` 数据有 24 行和 44 列，是 44 个物种（species）在 24 个样品（site）中的估计覆盖率，
+列名是 44 个物种拉丁名称的简写。`varechem` 数据有 24 行、14 列，是 24 个样品
+中 14 个土壤相关的属性。
+
+```{r}
+data(varespec)
+
+## Bray-Curtis distances between samples
+dis <- vegdist(varespec)
+```
+
+`vegdist` 默认计算样品间的 Bray-Curtis 距离，其定义为：
+
+$$d_{jk} = (\sum abs(x_{ij}-x_{ik}))/(\sum (x_{ij}+x_{ik}))$$
+
+其中，$x_{ij}$ 和 $x_{ik}$ 分别代表物种（列） $i$ 在两个样品（行）$j$ 和 $k$ 中的数量。
+则前两个位点的 Bray-Curtis 距离是 `r as.numeric(vegdist(varespec[1:2,]))`。
+
+```{r}
+## First 16 sites grazed, remaining 8 sites ungrazed
+groups <- factor(c(rep(1,16), rep(2,8)), labels = c("grazed","ungrazed"))
+
+## Calculate multivariate dispersions
+mod <- betadisper(dis, groups)
+mod
+```
+
+这 24 个样品来自两组处理，其中前 16 个为一组（**grazed**），后 8 个为另一组（**ungrazed**）。
+`betadisper()` 计算了每个组样品距离中心点（“中位数”）距离的平均值。输出中还包括
+23 个特征值（**eigenvalues**）。
+
+```{r}
+## Perform test
+anova(mod)
+```
+
+`anova()` 和 `permutest()` 分别计算显著性。
+
+```{r}
+## Permutation test for F
+permutest(mod, pairwise = TRUE, permutations = 99)
+```
+
+
+```{r}
+## Tukey's Honest Significant Differences
+(mod.HSD <- TukeyHSD(mod))
+plot(mod.HSD)
+```
+
+`plot()` 可以绘制样品和中心点之间的距离。
+
+```{r}
+## Plot the groups and distances to centroids on the
+## first two PCoA axes
+plot(mod)
+
+## with data ellipses instead of hulls
+plot(mod, ellipse = TRUE, hull = FALSE) # 1 sd data ellipse
+plot(mod, ellipse = TRUE, hull = FALSE, conf = 0.90) # 90% data ellipse
+
+## can also specify which axes to plot, ordering respected
+plot(mod, axes = c(3,1), seg.col = "forestgreen", seg.lty = "dashed")
+```
+
+
+```{r}
+## Draw a boxplot of the distances to centroid for each group
+boxplot(mod)
+```
+
+`scores()` 计算样本特征值。
+
+```{r}
+## `scores` and `eigenvals` also work
+scrs <- scores(mod)
+str(scrs)
+
+# 可以将其画在图上
+plot(scrs$sites, xlim = c(-.8, .8), ylim = c(-.5, .5))
+text(scrs$sites, labels = rownames(scrs$sites), pos = 4)
+```
+
+- 计算给出的样本、样本组的中心点坐标等。
+
+```{r}
+head(scores(mod, 1:4, display = "sites"))
+
+# group centroids/medians 
+scores(mod, 1:4, display = "centroids")
+
+# eigenvalues from the underlying principal coordinates analysis
+eigenvals(mod)
+```
+
+- `bias.adjust = TRUE` 对于 beta-多样性估计中的小样本偏差进行校正。
+
+```{r}
+## try out bias correction; compare with mod3
+(mod3B <- betadisper(dis, groups, type = "median", bias.adjust=TRUE))
+anova(mod3B)
+permutest(mod3B, permutations = 99)
+```
+
+- 哪怕只有一个分组，仍然可以使用
+
+```{r}
+## should always work for a single group
+group <- factor(rep("grazed", NROW(varespec)))
+(tmp <- betadisper(dis, group, type = "median"))
+(tmp <- betadisper(dis, group, type = "centroid"))
+```
+
+- 当有缺失值的时候，也可以使用
+
+```{r}
+## simulate missing values in 'd' and 'group'
+## using spatial medians
+groups[c(2,20)] <- NA
+dis[c(2, 20)] <- NA
+mod2 <- betadisper(dis, groups) ## messages
+mod2
+permutest(mod2, permutations = 99)
+anova(mod2)
+plot(mod2)
+boxplot(mod2)
+plot(TukeyHSD(mod2))
+```
+
+
+- `type = "centroid"` 时的结果（默认为 `type = "median"`，一般不需要修改）。
+
+```{r}
+## Using group centroids
+mod3 <- betadisper(dis, groups, type = "centroid")
+mod3
+permutest(mod3, permutations = 99)
+anova(mod3)
+plot(mod3)
+boxplot(mod3)
+plot(TukeyHSD(mod3))
+```
+
