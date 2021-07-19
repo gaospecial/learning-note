@@ -18,6 +18,8 @@ library(vegan)
 example("betadisper")
 ```
 
+### 使用 `varespec` 数据集计算 beta-dispersion
+
 `varespec` 数据有 24 行和 44 列，是 44 个物种（species）在 24 个样品（site）中的估计覆盖率，
 列名是 44 个物种拉丁名称的简写。`varechem` 数据有 24 行、14 列，是 24 个样品
 中 14 个土壤相关的属性。
@@ -44,6 +46,25 @@ groups <- factor(c(rep(1,16), rep(2,8)), labels = c("grazed","ungrazed"))
 mod <- betadisper(dis, groups)
 mod
 ```
+
+`mod` 返回一个 *betadisper* 类的列表，有以下几个元件：
+
+- `eig`：numeric；PCoA 分析的特征值
+
+- `vectors`: matrix；PCoA 分析特征向量
+
+- `distances`: numeric；在 PCoA 的多维空间中，每个样本与其对应的分组中心间的欧氏距离。
+
+- `group`: factor；分组信息。
+
+- `centroids`: matrix；分组在 PCoA 坐标系中的中心点。
+
+- `call`: 函数调用信息。
+
+```{r}
+str(mod)
+```
+
 
 这 24 个样品来自两组处理，其中前 16 个为一组（**grazed**），后 8 个为另一组（**ungrazed**）。
 `betadisper()` 计算了每个组样品距离中心点（“中位数”）距离的平均值。输出中还包括
@@ -89,7 +110,7 @@ plot(mod, axes = c(3,1), seg.col = "forestgreen", seg.lty = "dashed")
 boxplot(mod)
 ```
 
-`scores()` 计算样本特征值。
+- `scores()` 计算样本特征值。
 
 ```{r}
 ## `scores` and `eigenvals` also work
@@ -159,5 +180,58 @@ anova(mod3)
 plot(mod3)
 boxplot(mod3)
 plot(TukeyHSD(mod3))
+```
+
+### 使用 `dune` 数据集计算 beta-dispersion
+
+> 本例子来源于 Vignettes: Diversity analysis in vegan.
+
+使用的数据是荷兰沙丘（dune）草地牧场（meadow）上的植被（vegetation）和环境因子。
+
+```{r}
+# Vegetation and Environment in Dutch Dune Meadows.
+data("dune")
+data("dune.env")
+```
+
+
+- 使用 `betadiver()` 计算 beta-多样性。
+
+`betadiver()` 的第二个参数指定计算 beta 多样性指标的算法。算法基于 $a$, $b$, $c$ 等 3 个值（使用 `betadiver(help = TRUE)` 查看计算公式）。它们的含义如下：
+
+(ref:cap-abc-value) 一个物种在两个样方中的空间分布情况。分量 $a$ 是出现在两个样方中的物种总数；分量 $b$ 是出现在相邻样方但不在焦点样方中的物种总数； 分量 $c$ 是出现在焦点样方中但不在相邻样方中的物种总数。
+
+```{r abc-value-in-betadiver, include=FALSE, fig.cap="(ref:cap-abc-value)"}
+img_url = "https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20210719172616.png"
+knitr::include_graphics(img_url)
+```
+
+
+`method = "z"` 时，计算的公式为：
+
+$$z = (log(2) - log(2*a+b+c) + log(a+b+c))/log(2)$$
+
+计算得到的 `z` 是一个 *dist* 对象。
+
+```{r}
+z = betadiver(dune, method = "z")
+z
+```
+
+按照 `dune.env$Management` 中给出的土地管理类型进行分组，计算 beta-dispersion。
+
+```{r}
+(mod = with(dune.env, betadisper(z, Management)))
+```
+
+对计算得到的结果进行可视化。
+
+```{r}
+plot(mod)
+```
+
+
+```{r}
+boxplot(mod)
 ```
 
