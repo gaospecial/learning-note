@@ -51,6 +51,9 @@ jobs:
           ref: gh-pages
           path: book-output
 
-      - name: Deploy book
+      - name: Deploy to GitHub pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
         if: ${{ github.ref == 'refs/heads/master' }}
-        run: ./_deploy.sh
+        with:
+          branch: gh-pages
+          folder: _book
