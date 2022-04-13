@@ -1,9 +1,9 @@
 bookdown::gitbook:
   css: css/style.css
+  toc_depth: 4
   config:
     toc:
-      collapse: no
-      depth: 3
+      collapse: none
       before: |
         <li><a href="./">我的数据科学学习笔记</a></li>
       after: |
