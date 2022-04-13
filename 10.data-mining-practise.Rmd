@@ -1,0 +1,186 @@
+# 数据挖掘实战 {#data-mining-practise}
+
+该部分内容是学习《数据挖掘------基于 R 语言的实战》一书时做的读书笔记。
+
+**作者简介**
+
+张俊妮，美国哈佛大学统计学博士，现任北京大学国家发展研究院副教授。主要研究领域：人口统计学、数据挖掘与文本挖掘、因果推断。有十余年给北京大学各学科的学生讲授数据挖掘课程的经验，曾获北京大学教学优秀奖。
+
+**关于本书的内容**
+
+> 本书以深入浅出的语言系统地介绍了数据挖掘的框架和基本方法，主要内容包括：数据挖掘与 R 语言概述、数据理解、数据准备、关联规则挖掘、聚类分析、线性模型与广义线性模型、神经网络的基本方法、决策树、基于决策树的模型组合、模型评估与比较、R 语言数据挖掘大案例。本书使用基于 R 语言的数据挖掘案例贯穿全书，并辅以上机实验和习题，帮助读者熟练使用 R 语言进行数据挖掘。
+
+## 关联规则挖掘
+
+关联规则挖掘常用于购物篮分析应用，目的是发现**有意义的强关联规则**。
+
+### 购物篮分析
+
+使用 **arules** 软件包自带的 `Groceries` 交易（transaction）数据集进行购物篮分析。
+
+```{r eval=FALSE}
+install.packages("arules")
+install.packages("arulesViz")
+```
+
+**arules** 是用于关联规则挖掘的程序包，我们将调用其中的 `itemFrequencyPlot()`、`apriori()`、`inspect()` 等函数。**arulesViz** 是用于关联规则可视化的程序包，我们将调用其中的 `plot()` 函数。
+
+```{r}
+library(arules)
+library(arulesViz)
+```
+
+#### 交易数据集的类
+
+`Groceries` 交易数据集是一个结构化数据，包含了对 169 种商品的 9835 次购买记录。
+
+```{r}
+data("Groceries")
+Groceries
+```
+
+```{r}
+str(Groceries)
+summary(Groceries)
+```
+
+使用 `head()` 和 `inspect()` 函数可以查看 `transactions` 对象中的交易数据。
+
+```{r}
+inspect(head(Groceries))
+```
+
+交易数据中，购买次数最多的商品是 whole milk，有超过 2500 次；其次是 other vegetables 等等（图 \@ref(fig:top20-saled-item)）。
+
+(ref:figcap-top20-saled-item) 交易数据集中购买次数最多的 20 项
+
+```{r top20-saled-item, fig.cap="(ref:figcap-top20-saled-item)"}
+itemFrequencyPlot(Groceries, topN = 20, type = "absolute")
+```
+
+#### 对交易数据集进行关联分析
+
+`apriori()` 函数使用 Apriori 算法挖掘关联规则[^data-mining-practise-1]。函数参数中的 `parameter` 参数可以指定关联规则的支持度（support），置信度（confidence），每条规则包含的最大项数和最小项数（maxlen/minlen）以及输出结果格式（target）等。
+
+[^data-mining-practise-1]: Apriori 算法是关联规则挖掘的基本算法。
+
+```{r}
+rules = apriori(Groceries,
+                parameter = list(
+                  support = 0.001,
+                  confidence = 0.8,
+                  target = "rules"
+                ))
+```
+
+查看输出规则的基本信息，可知：
+
+-   所生成的关联规则共有 410 条；
+
+-   关联规则的长度（前项集 lhs 的项数[^data-mining-practise-2] + 后项集 rhs 的项数）大多数为 4 或 5；
+
+-   关联规则的支持度、置信度、提升值和支持观测数的统计值（分位数等）
+
+-   关联规则挖掘的信息。
+
+[^data-mining-practise-2]: 项集是关联规则挖掘中的一个基本概念。
+
+```{r}
+summary(rules)
+```
+
+按照提升值（lift）取关联规则的前 3 项，结果显示由项集 $A$（{liquor, red/blush wine}） 指向项集 $B$（{bottled beer} ）提升值最高。
+
+```{r}
+inspect(head(rules, by = "lift", n = 3))
+```
+图 \@ref(fig:association-rule) 对关联规则的可视化结果中可以看出，在全部的 410 个强关联规则中，存在一些支持度（横轴）、置信度（纵轴）和提升值（颜色）均比较理想的规则。
+
+(ref:figcap-association-rule) 关联规则的可视化
+
+```{r association-rule, fig.cap="(ref:figcap-association-rule)"}
+plot(rules)
+```
+
+#### 对关联规则去冗余
+
+关联规则中可能有一些是冗余的。举例来说：假设有一个规则 {A, B, C, D, E} => {F}，其置信度为 0.9；另有一条规则 {A, B, C, D} => {F}，其置信度为 0.95。因为后面这个规则的一般化程度和置信度都更高，所以前一条就是冗余的规则。除了置信度，还可以用提升值来判断一条规则是否冗余。
+
+```{r}
+# 去冗余
+rules_pruned = rules[!is.redundant(rules)]
+```
+
+#### 对关联规则进行排序和控制
+
+根据置信度对输出规则进行排序。
+
+```{r}
+rules = sort(rules, by = "confidence", decreasing = TRUE)
+```
+
+控制关联规则的长度。
+
+```{r}
+# 指定规则长度最大为 3
+rules_maxlen = apriori(
+  Groceries,
+  parameter = list(
+    supp = 0.001,
+    conf = 0.8,
+    maxlen = 3
+  )
+)
+
+# 查看规则
+inspect(head(rules_maxlen, by = "lift", n = 2))
+```
+
+#### 指定前项集和后项集
+
+指定前项集可以探索顾客在购买了某一商品后，可能会继续购买什么商品。如下面的例子，可以发现用户在购买了 whole milk 后，更有可能去买点蔬菜、酸奶等商品（图 \@ref(fig:rules-lhs-wholemilk)）。
+
+(ref:figcap-rules-lhs-wholemilk) 指定前项集的关联规则
+
+```{r rules-lhs-wholemilk, fig.cap="(ref:figcap-rules-lhs-wholemilk)"}
+rules_lhs_wholemilk = apriori(
+  Groceries,
+  parameter = list(
+    supp = 0.001,
+    conf = 0.15
+  ),
+  appearance = list(
+    lhs = "whole milk"
+  ),
+  control = list(
+    verbose = FALSE
+  )
+)
+
+plot(head(rules_lhs_wholemilk,by = "lift"), method = "graph")
+```
+
+
+指定后项集可以探索顾客在什么情况下会去买一个商品。如下面的例子，可以发现用户在购买了 点 whipped/sour cream、root vegetables 等商品后，更有可能去买 whole milk（图 \@ref(fig:rules-rhs-wholemilk)）。
+
+(ref:figcap-rules-rhs-wholemilk) 指定后项集的关联规则
+
+
+```{r rules-rhs-wholemilk, fig.cap="(ref:figcap-rules-rhs-wholemilk)"}
+rules_rhs_wholemilk = apriori(
+  Groceries,
+  parameter = list(
+    supp = 0.001,
+    conf = 0.8
+  ),
+  appearance = list(
+    rhs = "whole milk"
+  ),
+  control = list(
+    verbose = FALSE
+  )
+)
+
+plot(head(rules_rhs_wholemilk,by = "lift"), method = "graph")
+```
+
