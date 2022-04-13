@@ -1,4 +1,4 @@
-# (PART) Vegan {.unnumbered}
+# (PART) 微生物生态学软件包 {.unnumbered}
 
 # Vegan 使用技巧
 
@@ -20,6 +20,8 @@ example("betadisper")
 
 ### 使用 `varespec` 数据集计算 beta-dispersion
 
+#### 数据集说明
+
 `varespec` 数据有 24 行和 44 列，是 44 个物种（species）在 24 个样品（site）中的估计覆盖率，
 列名是 44 个物种拉丁名称的简写。`varechem` 数据有 24 行、14 列，是 24 个样品
 中 14 个土壤相关的属性。
@@ -31,12 +33,16 @@ data(varespec)
 dis <- vegdist(varespec)
 ```
 
+#### 样本间距
+
 `vegdist` 默认计算样品间的 Bray-Curtis 距离，其定义为：
 
 $$d_{jk} = (\sum abs(x_{ij}-x_{ik}))/(\sum (x_{ij}+x_{ik}))$$
 
 其中，$x_{ij}$ 和 $x_{ik}$ 分别代表物种（列） $i$ 在两个样品（行）$j$ 和 $k$ 中的数量。
 则前两个位点的 Bray-Curtis 距离是 `r as.numeric(vegdist(varespec[1:2,]))`。
+
+#### 样本分组及计算结果
 
 ```{r}
 ## First 16 sites grazed, remaining 8 sites ungrazed
@@ -70,6 +76,12 @@ str(mod)
 `betadisper()` 计算了每个组样品距离中心点（“中位数”）距离的平均值。输出中还包括
 23 个特征值（**eigenvalues**）。
 
+#### 统计分析
+
+> To test **if one or more groups is more variable than the others**, ANOVA of the distances to group centroids can be performed and parametric theory used to interpret the significance of F. An alternative is to use a permutation test. `permutest.betadisper` permutes model residuals to generate a permutation distribution of F under the Null hypothesis of no difference in dispersion between groups.
+
+`anova()` 方法被用来比较各个分组间是否存在有变化程度更大的情况。`permutest()` 则为这一任务提供了另一种统计分析手段。
+
 ```{r}
 ## Perform test
 anova(mod)
@@ -82,6 +94,8 @@ anova(mod)
 permutest(mod, pairwise = TRUE, permutations = 99)
 ```
 
+
+`TukeyHSD()` 方法则计算出两两 group 之间存在的差异及其显著性。
 
 ```{r}
 ## Tukey's Honest Significant Differences
