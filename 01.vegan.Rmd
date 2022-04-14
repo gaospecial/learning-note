@@ -1,6 +1,6 @@
-# (PART) 微生物生态学软件包 {.unnumbered}
+# (PART) 微生物生态学 {.unnumbered}
 
-# Vegan 使用技巧
+# Vegan 使用技巧 {#using-vegan}
 
 > R package for community ecologists: popular ordination methods, ecological null models & diversity analysis
 
