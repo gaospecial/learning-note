@@ -1,0 +1,158 @@
+# 聚类分析 {#clustering-analysis}
+
+聚类分析是一种无监督数据挖掘方法，它基于观测之间的距离度量将观测分组。聚类分析可用于对客户进行细分，以便为细分客户群体指定针对性营销策略。
+
+常用的聚类方法有： $k$ 均值聚类法和层次聚类法。
+
+## 商场客户聚类
+
+`ch5_mall.csv` 数据集记录了一家商场的 200 位客户的信息。这里使用客户年龄（Age）、年收入（Annual Income）和消费得分（Spending Score）对客户进行聚类。
+
+```{r}
+file = xfun::magic_path("ch5_mall.csv")
+mall = readr::read_csv(file) %>%
+  rename(Income = 4, Score = 5)
+mall
+```
+
+
+为了度量两个观测之间的距离，通常在聚类前对各连续变量进行标准化。`scale()` 函数的参数 `center = TURE` 表示减去均值，`scale = TRUE` 表示除以标准偏差。因此标准化后的数据均值为 0，标准差为 1。
+
+```{r}
+library(dplyr)
+stdmall = scale(mall[,3:5], center = TRUE, scale = TRUE)
+summary(stdmall)
+```
+
+### K-means 聚类
+
+使用 `kmeans()` 函数聚类，`centers = 5` 表示聚为 5 个类别，`iter.max = 99` 表示算法最多循环 99 次，`nstart = 25` 表示进行 25 次随机初始化，取目标函数值最小的聚类结果。
+
+```{r}
+mall.kmeans = kmeans(stdmall, centers = 5, iter.max = 99, nstart = 25)
+```
+
+聚类后得到一个 `kmeans` 类，其包含的 slot 如下：
+
+- cluster：各个观测所属的类别；
+- centers：各个类别的中心；
+- totss：总平方和；
+- tot.withinss：组内平方和；
+- betweenss：组间平方和；
+- size：各个类别的观测数。
+
+```{r}
+mall.kmeans
+```
+
+
+```{r}
+mall.kmeans.cluster = mall.kmeans$cluster
+table(mall.kmeans.cluster)
+```
+
+将聚类的结果附加到 `mall` 数据集中去。并按照客户年龄、年收入和消费得分进行可视化（图 \@ref(fig:mall-withcluster-kmeans)）。
+
+(ref:figcap-mall-withcluster-kmeans) 使用 K-means 聚类后的结果
+
+```{r mall-withcluster-kmeans, fig.cap="(ref:figcap-mall-withcluster-kmeans)"}
+mall.withcluster = mall %>%
+  mutate(kmeans_cluster = as.factor(mall.kmeans.cluster))
+
+library(ggplot2)
+p = ggplot(mall.withcluster, aes(color = kmeans_cluster)) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") +
+  labs(color = "Cluster")
+
+p1 = p + aes(Age, Income)
+p2 = p + aes(Age, Score)
+p3 = p + aes(Income, Score)
+
+ggpubr::ggarrange(p1, p2, p3, common.legend = TRUE, legend = "right")
+```
+
+### 层次聚类法
+
+接下来使用层次聚类法重做上述任务，并可视化比较两者结果的差别。`dist()` 默认将计算观测值间的欧氏距离，`method = "average"` 指定使用平均连接法。`plot()` 可以直接画出聚类树。
+
+```{r}
+tree = hclust(dist(stdmall), method = "average")
+```
+
+将层级聚类结果切分为 5 个类别。红色的方框叠加显示了各类别的划分。
+
+```{r}
+mall.hclust.cluster = cutree(tree, k = 5)
+plot(tree)
+rect.hclust(tree, k = 5)
+```
+
+将层次聚类的结果加入原始数据集，并可视化。将两种聚类方法得到的结果放在一起对比，发现基本一致（图 \@ref(fig:mall-withcluster-hclust)）。
+
+(ref:figcap-mall-withcluster-hclust) K-means 和 层次聚类结果的比较。
+
+```{r mall-withcluster-hclust, fig.cap="(ref:figcap-mall-withcluster-hclust)"}
+mall.withcluster = mall.withcluster %>%
+  mutate(hclust_cluster = as.factor(mall.hclust.cluster))
+
+p = ggplot(mall.withcluster, aes(color = hclust_cluster)) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") +
+  labs(color = "Cluster")
+
+p4 = p + aes(Age, Income)
+p5 = p + aes(Age, Score)
+p6 = p + aes(Income, Score)
+
+cowplot::plot_grid(ggpubr::ggarrange(p1, p2, p3, common.legend = TRUE, legend = "right", ncol = 3),
+                   ggpubr::ggarrange( p4, p5, p6, common.legend = TRUE, legend = "right", ncol = 3),
+                   ncol = 1, labels = "AUTO")
+```
+
+### 最佳类别数
+
+**NbClust** 软件包整合了判断最佳类别数的 30 种统计方法，从而能够综合各统计方法的结果得到最佳类别数。
+
+```{r}
+library(NbClust)
+mall.nbclust.kmeans = NbClust(stdmall, method = "kmeans")
+mall.nbclust.kmeans
+```
+
+`Best.partition` 记录了综合各个统计指标所得的最佳分类结果。
+
+```{r}
+mall.withcluster = mall.withcluster %>%
+  mutate(best_kmeans_cluster = as.factor(mall.nbclust.kmeans$Best.partition))
+```
+
+下面使用平均连接层次聚类，并将最佳结果也放到 `mall.withcluster` 中去。
+
+```{r}
+mall.nbclust.average = NbClust(stdmall, method = "average")
+mall.withcluster$best_average_cluster = as.factor(mall.nbclust.average$Best.partition)
+```
+
+比较最佳类别数下的结果（图 \@ref(fig:nbclust-result)）。
+
+(ref:figcap-nbclust-result) 使用 NbClust 计算得到的最佳类别数聚类后的结果。（A）最佳类别数为 2 的 K-means 聚类；（B）最佳类别数为 2 的层次聚类。
+
+```{r nbclust-result, fig.cap="(ref:figcap-nbclust-result)"}
+p = ggplot(mall.withcluster) +
+  geom_point() +
+  scale_color_brewer(palette = "Set1") +
+  labs(color = "Cluster")
+
+p7 = p + aes(Age, Income, color = best_kmeans_cluster)
+p8 = p + aes(Age, Score, color = best_kmeans_cluster)
+p9 = p + aes(Income, Score, color = best_kmeans_cluster)
+p10 = p + aes(Age, Income, color = best_average_cluster)
+p11 = p + aes(Age, Score, color = best_average_cluster)
+p12 = p + aes(Income, Score, color = best_average_cluster)
+
+cowplot::plot_grid(ggpubr::ggarrange(p7, p8, p9, common.legend = TRUE, legend = "right", ncol = 3),
+                   ggpubr::ggarrange( p10, p11, p12, common.legend = TRUE, legend = "right", ncol = 3),
+                   ncol = 1, labels = "AUTO")
+```
+
