@@ -12,7 +12,7 @@
 
 > 本书以深入浅出的语言系统地介绍了数据挖掘的框架和基本方法，主要内容包括：数据挖掘与 R 语言概述、数据理解、数据准备、关联规则挖掘、聚类分析、线性模型与广义线性模型、神经网络的基本方法、决策树、基于决策树的模型组合、模型评估与比较、R 语言数据挖掘大案例。本书使用基于 R 语言的数据挖掘案例贯穿全书，并辅以上机实验和习题，帮助读者熟练使用 R 语言进行数据挖掘。
 
-# 关联规则挖掘
+# 关联规则挖掘 {#association-analysis}
 
 关联规则挖掘常用于购物篮分析应用，目的是发现**有意义的强关联规则**。
 
@@ -294,6 +294,7 @@ rules_rhs_survive = apriori(
 )
 ```
 
+分析显示，头等舱、女性、无父母和子女的乘客获救的提升值最高，总体有 98.1% 的几率存活；头等舱、女性、年龄 20 - 40 岁的乘客则有 97.7% 的几率存活。
 
 ```{r}
 rules_rhs_survive = rules_rhs_survive[!is.redundant(rules_rhs_survive)]
@@ -301,6 +302,8 @@ inspect(head(rules_rhs_survive, by = "lift"))
 ```
 
 ### 死亡的关联特征
+
+分析乘客死亡的关联特征，可以得出：具有二等舱、男性、年龄在 20 - 40 岁、无兄弟姐妹的乘客死亡几率可达 95%。
 
 ```{r}
 rules_rhs_not_survive = apriori(
@@ -316,3 +319,54 @@ rules_rhs_not_survive = rules_rhs_not_survive[!is.redundant(rules_rhs_not_surviv
 inspect(head(rules_rhs_not_survive, by = "lift"))
 ```
 
+## 学生特征及考试成绩
+
+`StudentsPerformance.csv` 数据集给出了一些学生的特征及考试成绩。数据的定义如下：
+
+
+- gender：性别
+- race/ethnicity:种族
+- parental level of education：父母教育水平
+- lunch：参与的午餐计划
+- test preparation course：测验准备课程完成情况
+- math score：数学成绩
+- reading score：阅读成绩
+- writing score：写作成绩
+
+
+```{r}
+file = xfun::magic_path("StudentsPerformance.csv")
+studentPerformance = readr::read_csv(file)
+studentPerformance
+```
+
+将成绩分为不及格（< 60），及格（＜ 85）和优秀（≥ 85）3 个等级，然后做关联规则分析。例如数学成绩及格的一些关联特征如下。
+
+```{r}
+library(dplyr)
+studentPerformance = studentPerformance %>%
+  mutate_if(is.numeric, ~ cut(., breaks = c(0, 59, 84, 100), include.lowest = TRUE)) %>%
+  mutate_all(as.factor)
+
+# 关联分析
+rules_rhs_math = apriori(studentPerformance,
+                parameter = list(
+                  supp = 0.1,
+                  conf = 0.5
+                ),
+                appearance = list(rhs = "math score=(59,84]")
+                )
+inspect(head(rules_rhs_math, by = "lift"))
+```
+
+## 关联规则分析的重要概念
+
+关联分析中的最小支持度、最小置信度等参数的设置对于关联分析的结果由显著影响。它们的定义如下：
+
+- **支持度**：相当于联合概率。例如，若有 3% 的顾客同时购买了尿布与啤酒，那么 {尿布} => {啤酒} 的支持度为 3%。
+- **置信度**：相当于条件概率。例如，若购买了尿布的顾客有 20% 购买了啤酒，那么 {尿布} => {啤酒} 的置信度为 20%。
+
+**术语中英文对照**
+
+- **项集**（itemset）：项的集合。
+- **频繁项集**（frequent itemset）
