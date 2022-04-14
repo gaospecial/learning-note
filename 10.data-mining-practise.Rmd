@@ -1,4 +1,6 @@
-# 数据挖掘实战 {#data-mining-practise}
+# (PART) 《数据挖掘实战》 {.unnumbered}
+
+# 关于《数据挖掘实战》 {#data-mining-practise}
 
 该部分内容是学习《数据挖掘------基于 R 语言的实战》一书时做的读书笔记。
 
@@ -10,11 +12,11 @@
 
 > 本书以深入浅出的语言系统地介绍了数据挖掘的框架和基本方法，主要内容包括：数据挖掘与 R 语言概述、数据理解、数据准备、关联规则挖掘、聚类分析、线性模型与广义线性模型、神经网络的基本方法、决策树、基于决策树的模型组合、模型评估与比较、R 语言数据挖掘大案例。本书使用基于 R 语言的数据挖掘案例贯穿全书，并辅以上机实验和习题，帮助读者熟练使用 R 语言进行数据挖掘。
 
-## 关联规则挖掘
+# 关联规则挖掘
 
 关联规则挖掘常用于购物篮分析应用，目的是发现**有意义的强关联规则**。
 
-### 购物篮分析
+## 购物篮分析
 
 使用 **arules** 软件包自带的 `Groceries` 交易（transaction）数据集进行购物篮分析。
 
@@ -30,7 +32,7 @@ library(arules)
 library(arulesViz)
 ```
 
-#### 交易数据集的类
+### 交易数据集的类
 
 `Groceries` 交易数据集是一个结构化数据，包含了对 169 种商品的 9835 次购买记录。
 
@@ -58,7 +60,7 @@ inspect(head(Groceries))
 itemFrequencyPlot(Groceries, topN = 20, type = "absolute")
 ```
 
-#### 对交易数据集进行关联分析
+### 对交易数据集进行关联分析
 
 `apriori()` 函数使用 Apriori 算法挖掘关联规则[^data-mining-practise-1]。函数参数中的 `parameter` 参数可以指定关联规则的支持度（support），置信度（confidence），每条规则包含的最大项数和最小项数（maxlen/minlen）以及输出结果格式（target）等。
 
@@ -102,7 +104,7 @@ inspect(head(rules, by = "lift", n = 3))
 plot(rules)
 ```
 
-#### 对关联规则去冗余
+### 对关联规则去冗余
 
 关联规则中可能有一些是冗余的。举例来说：假设有一个规则 {A, B, C, D, E} => {F}，其置信度为 0.9；另有一条规则 {A, B, C, D} => {F}，其置信度为 0.95。因为后面这个规则的一般化程度和置信度都更高，所以前一条就是冗余的规则。除了置信度，还可以用提升值来判断一条规则是否冗余。
 
@@ -111,7 +113,7 @@ plot(rules)
 rules_pruned = rules[!is.redundant(rules)]
 ```
 
-#### 对关联规则进行排序和控制
+### 对关联规则进行排序和控制
 
 根据置信度对输出规则进行排序。
 
@@ -136,7 +138,7 @@ rules_maxlen = apriori(
 inspect(head(rules_maxlen, by = "lift", n = 2))
 ```
 
-#### 指定前项集和后项集
+### 指定前项集和后项集
 
 指定前项集可以探索顾客在购买了某一商品后，可能会继续购买什么商品。如下面的例子，可以发现用户在购买了 whole milk 后，更有可能去买点蔬菜、酸奶等商品（图 \@ref(fig:rules-lhs-wholemilk)）。
 
@@ -182,5 +184,134 @@ rules_rhs_wholemilk = apriori(
 )
 
 plot(head(rules_rhs_wholemilk,by = "lift"), method = "graph")
+```
+
+## 泰坦尼克号存活情况分析 {#tatanic-survival}
+
+### 数据集的定义和预处理
+
+本分析所用的数据集记录了 891 位泰坦尼克号乘客的 12 个变量信息，希望能够通过分析挖掘乘客的存活情况与其它变量的关联规则。
+
+```{r}
+library(readr)
+file = xfun::magic_path("ch4_titanic_train.csv")
+titanic = read_csv(file)
+```
+
+该数据集包含的字段如下：
+
+- PassengerId：乘客编号
+- Survived：是否存活（0 = 没有，1 = 存活）
+- Pclass：船舱等级（1 = 一等舱，2 = 二等舱，3 = 三等舱）
+- Name：乘客姓名
+- Sex：乘客性别
+- Age：乘客年龄
+- Sibsp：船上的兄妹/配偶数目
+- Parch：船上的父母/孩子数目
+- Ticket：船票号
+- Fare：船票价格
+- Cabin：船舱号
+- Embarked：登船港口（C = 瑟堡，Q = 皇后镇，S = 南安普顿）
+
+
+```{r}
+summary(titanic)
+```
+
+在进行关联规则分析前，对数据集进行如下预处理：
+
+1. 去掉唯一标识符字段，如乘客编号（PassengerId）、姓名（Name）、传票号（Ticket）；
+2. 去掉缺失过多的字段，如船舱号（Cabin）；
+3. 去掉冗余的字段，如因为船票价格（Fare）与船舱等级相关（Pclass），故删去；
+4. 删掉一些不完整的记录，如年龄（Age）缺失的观测。
+
+经过这些处理后，还有 712 条观测数据，每个观测有 7 个值。
+
+```{r}
+library(dplyr)
+titanic = titanic %>%
+  select(-c(PassengerId, Name, Ticket, Cabin, Fare)) %>%
+  mutate_if(is.character, list(~na_if(., ""))) %>% # 将空字符串替换为 NA
+  filter(complete.cases(.))
+titanic
+```
+
+因为关联分析需要所有的变量均为分类变量（因子），所以需要把年龄（Age）切分为因子。在进行这一操作之前，先看一下年龄的分布情况。
+
+```{r}
+library(ggplot2)
+ggplot(titanic, aes(Age)) +
+  geom_histogram(binwidth = 5, fill = "lightblue", color = "black")
+```
+
+接下来将年龄以 20 岁为间隔切分，并将所有变量转变为因子。
+
+```{r}
+titanic = titanic %>%
+  mutate(Age = cut(Age, breaks = seq(0,100,by=20))) %>%
+  mutate_all(as.factor)
+```
+
+### 关联规则分析
+
+接下来使用 `apriori()` 函数对 `titanic` 数据集进行关联分析。
+
+```{r}
+library(arules)
+library(arulesViz)
+rules = apriori(titanic, parameter = list(
+  support = 0.1,
+  confidence = 0.8
+))
+```
+
+
+```{r}
+summary(rules)
+```
+
+```{r}
+plot(rules)
+```
+
+```{r}
+rules = rules[is.redundant(rules)]
+inspect(head(rules, by = "lift"))
+```
+
+
+### 获救的关联特征
+
+使用指定后项集的关联规则挖掘，可以探究顾客特征取什么值时会存活（Survived = 1）。
+
+```{r}
+rules_rhs_survive = apriori(
+  titanic,
+  parameter = list(supp = 0.05, conf = 0.8),
+  appearance = list(rhs = c("Survived=1")),
+  control = list(verbose = FALSE)
+)
+```
+
+
+```{r}
+rules_rhs_survive = rules_rhs_survive[!is.redundant(rules_rhs_survive)]
+inspect(head(rules_rhs_survive, by = "lift"))
+```
+
+### 死亡的关联特征
+
+```{r}
+rules_rhs_not_survive = apriori(
+  titanic,
+  parameter = list(supp = 0.05, conf = 0.8),
+  appearance = list(rhs = c("Survived=0")),
+  control = list(verbose = FALSE)
+)
+```
+
+```{r}
+rules_rhs_not_survive = rules_rhs_not_survive[!is.redundant(rules_rhs_not_survive)]
+inspect(head(rules_rhs_not_survive, by = "lift"))
 ```
 
