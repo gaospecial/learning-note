@@ -96,6 +96,7 @@ summary(rules)
 ```{r}
 inspect(head(rules, by = "lift", n = 3))
 ```
+
 图 \@ref(fig:association-rule) 对关联规则的可视化结果中可以看出，在全部的 410 个强关联规则中，存在一些支持度（横轴）、置信度（纵轴）和提升值（颜色）均比较理想的规则。
 
 (ref:figcap-association-rule) 关联规则的可视化
