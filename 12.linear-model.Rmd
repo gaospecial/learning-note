@@ -224,6 +224,6 @@ test.pred.logit = 1 * (predict(fit.logit, diabetes_test, type = "response") > 0.
 table(diabetes_test$Outcome, test.pred.logit)
 ```
 
-使用 LASSO 进行变量选择可以得到最佳模型。因为最佳模型与原模型的效果差别不大，所以不再赘述。
+使用 LASSO 算法[^about-lasso] 进行变量选择可以得到最佳模型。因为最佳模型与原模型的效果差别不大，所以不再赘述。
 
-
+[^about-lasso]: 在统计学和机器学习中，Lasso 算法（Least Absolute Shrinkage and Selection Operator，又译最小绝对值收敛和选择算子、套索算法）是一种同时进行特征选择和正则化（数学）的回归分析方法，旨在增强统计模型的预测准确性和可解释性。
