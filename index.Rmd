@@ -57,7 +57,9 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   fig.width = 8,
-  fig.asp = 0.618
+  fig.asp = 0.618,
+  fig.showtext = TRUE,
+  fig.align = "center"
 )
 
 Sys.setenv(LANGUAGE = "en") #显示英文报错信息

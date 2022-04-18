@@ -410,11 +410,13 @@ colSums(abs(coef.indic.lasso)) %>% table() %>%
 
 ```{r}
 library(pheatmap)
+library(RColorBrewer)
 idx = which(colSums(abs(coef.indic.lasso)) > 5)
 pheatmap(t(coef.indic.lasso[, idx]), 
          show_rownames = TRUE, 
          show_colnames = FALSE, 
-         breaks = seq(-1, 1, length.out = 3))
+         color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdBu")))(100),
+         breaks = seq(-1, 1, length.out = 100))
 ```
 
 
