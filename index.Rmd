@@ -53,6 +53,8 @@ options(bookdown.post.latex = function(x) {
 
 options(tinytex.verbose = TRUE)
 
+require(showtext)
+
 knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,

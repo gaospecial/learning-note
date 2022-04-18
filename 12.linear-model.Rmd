@@ -263,20 +263,21 @@ test = lapply(1:10, function(k){
 
 ```{r}
 library(glmnet)
-prob.logit.set = lapply(1:10, function(k){
+fit.logit = lapply(1:10, function(k){
   # 逻辑回归模型
-  fit.logit = glm( `是否流失` ~ ., 
+   glm( `是否流失` ~ ., 
                    data = learn[[k]] %>% select(-`设备编码`),
                    family = "binomial")
-  
-  # 将模型应用于相应的测试数据集
-  predict(fit.logit, test[[k]], type = "response")
 })
 ```
 
 将根据学习数据集的 10 个插补后数据集分别建立模型所得的 10 组预测流失概率进行平均，得到测试数据集的预测流失概率。
 
 ```{r}
+prob.logit.set = lapply(1:10, function(k){
+  # 将模型应用于相应的测试数据集
+  predict(fit.logit[[k]], test[[k]], type = "response")
+})
 prob.logit = bind_rows(prob.logit.set) %>% colMeans()
 ```
 
@@ -419,6 +420,11 @@ pheatmap(t(coef.indic.lasso[, idx]),
          breaks = seq(-1, 1, length.out = 100))
 ```
 
+实际上，即便不使用 LASSO 分析，在广义线性模型中也会报告有哪些自变量在模型中占有更高的权重。`summary()` 输出结果中的最后一列（`Pr(>|z|`）中，凡是小于 0.05 的都被特别标注了出来，这些便是模型中的主要参量。
+
+```{r}
+summary(fit.logit[[1]])
+```
 
 
 
