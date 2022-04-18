@@ -53,6 +53,13 @@ options(bookdown.post.latex = function(x) {
 
 options(tinytex.verbose = TRUE)
 
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 8,
+  fig.asp = 0.618
+)
+
 Sys.setenv(LANGUAGE = "en") #显示英文报错信息
 ```
 
