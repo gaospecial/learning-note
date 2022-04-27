@@ -68,8 +68,7 @@ x  & \text{if } x \geq 0 \\
 (\#eq:relu)
 \end{equation}$$
 
-
-- Softmax 函数：$y_j = \frac{e^{u_j}}{\sum_{j'=1}^je^{u_{j'}}} \in (0,1)$
+-   Softmax 函数：$y_j = \frac{e^{u_j}}{\sum_{j'=1}^je^{u_{j'}}} \in (0,1)$
 
 与 S 型函数和 ReLu 函数不同，Softmax 函数是多变量输入激活函数。Softmax 与正常的 max 函数不同：max 函数仅输出最大值，但 Softmax 确保较小的值具有较小的概率，并且不会直接丢弃。
 
@@ -81,12 +80,12 @@ x  & \text{if } x \geq 0 \\
 
 根据因变量的取值类型，要在输出层选用不同的激活函数。
 
-- 因变量是二值变量或比例，输出层激活函数采用 Logistic 函数；
-- 因变量是多种取值的定类变量，输出层激活函数使用 Softmax 函数或 Logistic 函数；
-- 因变量是多种取值的定序变量，可将其看做定类变量，或者根据多个输出单元的结果进行定序；
-- 因变量为计数变量（事件发生的次数），输出层的激活函数采用指数函数；
-- 因变量为取值可正可负的连续变量（如满足正态分布的数值），输出层激活函数采用恒等函数；
-- 因变量为非负连续变量（如收入、销售额），通常将因变量进行 Box-Cox 转换后，在使用因变量可正可负的方法。
+-   因变量是二值变量或比例，输出层激活函数采用 Logistic 函数；
+-   因变量是多种取值的定类变量，输出层激活函数使用 Softmax 函数或 Logistic 函数；
+-   因变量是多种取值的定序变量，可将其看做定类变量，或者根据多个输出单元的结果进行定序；
+-   因变量为计数变量（事件发生的次数），输出层的激活函数采用指数函数；
+-   因变量为取值可正可负的连续变量（如满足正态分布的数值），输出层激活函数采用恒等函数；
+-   因变量为非负连续变量（如收入、销售额），通常将因变量进行 Box-Cox 转换后，在使用因变量可正可负的方法。
 
 *这部分内容解释起来比较复杂，暂且略过*
 
@@ -94,18 +93,18 @@ x  & \text{if } x \geq 0 \\
 
 `ch7_wine.csv` 记录了与红酒品质相关的 12 个变量，分别是：
 
-- fixed.acidity：固定酸度
-- volatile.acidity：挥发性酸度
-- citric.acid：柠檬酸
-- residual.sugar：残留的糖分
-- chlorides：氯化物
-- free.sulfur.dioxide：游离二氧化硫
-- total.sulfur.dioxide：总二氧化硫
-- density：密度
-- pH：酸碱度
-- sulphates：硫酸盐
-- alcohol：酒精度
-- quality：**因变量**，品质等级，取值 3 - 9。
+-   fixed.acidity：固定酸度
+-   volatile.acidity：挥发性酸度
+-   citric.acid：柠檬酸
+-   residual.sugar：残留的糖分
+-   chlorides：氯化物
+-   free.sulfur.dioxide：游离二氧化硫
+-   total.sulfur.dioxide：总二氧化硫
+-   density：密度
+-   pH：酸碱度
+-   sulphates：硫酸盐
+-   alcohol：酒精度
+-   quality：**因变量**，品质等级，取值 3 - 9。
 
 ```{r}
 file = xfun::magic_path("ch7_wine.csv")
@@ -176,9 +175,7 @@ for (i in 1:nrow(y_test.ord)){
 }
 ```
 
-
-
-### 构建神经网络
+### 使用 TensorFlow 神经网络
 
 构建神经网络需要先配置模型的层，然后再编译模型。
 
@@ -194,17 +191,17 @@ model = keras_model_sequential() %>%
 summary(model)
 ```
 
-该网络的第一层 `layer_flatten()` 将输入数据转换成一维数组（这里是 11 维的向量，如果是 28 * 28 的矩阵，则可以写 `input_shape = c(28, 28)`）。该层没有要学习的参数，它只会重新格式化数据。
+该网络的第一层 `layer_flatten()` 将输入数据转换成一维数组（这里是 11 维的向量，如果是 28 \* 28 的矩阵，则可以写 `input_shape = c(28, 28)`）。该层没有要学习的参数，它只会重新格式化数据。
 
 接下来是两个密集连接层或全连接层。第一个 `Dense` 层有 128 个节点（或神经元），第二个（也是最后一个）层会返回一个长度为 7 的数组。每个节点都包含一个得分，用来表示当前输入属于 7 个类别中的哪一类。
 
-### 编译模型
+#### 编译模型
 
 在准备对模型进行训练之前，还需要再对其进行一些设置。以下内容是在模型的编译步骤中添加的：
 
-- 损失函数：用于测量模型在训练期间的准确率。您会希望最小化此函数，以便将模型“引导”到正确的方向上。
-- 优化器：决定模型如何根据其看到的数据和自身的损失函数进行更新。
-- 指标：用于监控训练和测试步骤。以下示例使用了准确率，即被正确分类的比率。
+-   损失函数：用于测量模型在训练期间的准确率。您会希望最小化此函数，以便将模型"引导"到正确的方向上。
+-   优化器：决定模型如何根据其看到的数据和自身的损失函数进行更新。
+-   指标：用于监控训练和测试步骤。以下示例使用了准确率，即被正确分类的比率。
 
 ```{r}
 model %>%
@@ -215,7 +212,7 @@ model %>%
   )
 ```
 
-### 训练定类模型
+#### 训练定类模型
 
 ```{r}
 model %>% 
@@ -247,28 +244,6 @@ model %>%
   )
 ```
 
-### 训练定序模型
-
-```{r}
-model %>% 
-  fit(
-    x = x_train, y = y_train.ord,
-    epochs = 5,
-    validation_split = 0.3,
-    verbose = 2
-  )
-
-model %>%
-  evaluate(
-    x = x_test,
-    y = y_test.ord,
-    verbose = 0
-  )
-```
-
-
-结果表明，模型在测试数据集上的准确率略低于训练数据集。训练准确率和测试准确率之间的差距代表过拟合。**过拟合**是指机器学习模型在新的、以前未曾见过的输入上的表现不如在训练数据上的表现。过拟合的模型会“记住”训练数据集中的噪声和细节，从而对模型在新数据上的表现产生负面影响。
-
 
 
 ```{r}
@@ -291,7 +266,29 @@ class_pred[1:20]
 ```
 
 
-### 保存预测模型
+#### 训练定序模型
+
+```{r}
+model %>% 
+  fit(
+    x = x_train, y = y_train.ord,
+    epochs = 5,
+    validation_split = 0.3,
+    verbose = 2
+  )
+
+model %>%
+  evaluate(
+    x = x_test,
+    y = y_test.ord,
+    verbose = 0
+  )
+```
+
+**说明**：模型在测试数据集上的准确率略低于训练数据集。训练准确率和测试准确率之间的差距代表过拟合。**过拟合**是指机器学习模型在新的、以前未曾见过的输入上的表现不如在训练数据上的表现。过拟合的模型会"记住"训练数据集中的噪声和细节，从而对模型在新数据上的表现产生负面影响。
+
+
+#### 保存预测模型
 
 使用 `save_model_tf()` 保存神经网络模型，`load_model_tf()` 导入预先创建的神经网络模型。
 
@@ -300,19 +297,108 @@ save_model_tf(object = model, filepath = "model")
 reloaded_model = load_model_tf("model")
 ```
 
+### 使用经典的 RSNNS 神经网络模型
+
+**RSNNS** [@R-RSNNS]是 R 到 SNNS 神经网络模拟器的接口，含有很多神经网络的常规程序。
+
+首先，尝试构建一个包含 3 个隐含层的神经网络，每层包含的神经元个数均为 5。
+
+调整神经网络的参数，可得到四种神经网络模型。
+
+- 第一种模型，将因变量看做定类变量，不使用权衰减；
+- 第二种模型，将因变量看做定序变量，不使用权衰减。
+
+#### 定类预测模型
+
+```{r}
+library(RSNNS)
+
+size1 = size2 = size3 = 5
+
+# 第一种模型
+mlp.nom.nodecay = mlp(
+  x_train, y_train.nom,
+  size = c(size1, size2, size3),
+  inputsTest = x_test,
+  targetsTest = y_test.nom,
+  maxit = 300,  # 迭代次数 300 次
+  learnFuncParams = c(0.1)   # 学习速率指定为 0.1
+)
+summary(mlp.nom.nodecay)
+```
+
+除了隐含层之外，神经网络还包含 1 个输入层和 1 个输出层。输出层输出 7 维向量，分别指代将预测归为 0 - 6 类的可能性。
+
+针对测试数据集，得出了一个预测矩阵。使用 `which.max()` 可以计算得到预测分类。计算预测分类与实际分类相符的比例，可以得到预测准确率 `accu`。
+
+```{r}
+mlp.nom.nodecay$fittedTestValues
+
+class.func.nom = function(prob){
+  which.max(prob) - 1
+}
+
+result.nom = apply(mlp.nom.nodecay$fittedTestValues, 1, class.func.nom)
+
+# 预测准确率
+accu = sum(result.nom == wine_test$quality) / length(wine_test$quality)
+accu
+
+table(result.nom, wine_test$quality)
+```
+
+#### 定序预测模型
+
+第二种模型，使用了定序自变量作为输出。
+
+```{r}
+# 第二种模型
+mlp.ord.nodecay = mlp(
+  x_train, y_train.ord,
+  size = c(size1, size2, size3),
+  inputsTest = x_test,
+  targetsTest = y_test.ord,
+  maxit = 300,  # 迭代次数 300 次
+  learnFuncParams = c(0.1)
+)
+summary(mlp.ord.nodecay)
+```
+
+定序预测向量需要经过处理，才能得到预测得出的类。计算按序数加权的分类准确率 `weighted.accu`。注意这个准确率是取所有预测分类平均值之后的结果。例如实际分类是 3，预测分类是 6，则这一预测的加权准确率为 0.5。
+
+```{r}
+mlp.ord.nodecay$fittedTestValues
+
+
+class.func.ord = function(prob){
+  if (any(prob > 0.5)){
+    return(max(which(prob > 0.5)) - 1)
+  } else {
+    return(NULL)
+  }
+}
+
+result.ord = apply(mlp.ord.nodecay$fittedTestValues, 1, class.func.ord)
+
+# 按序数加权准确率
+weighted.accu = mean(1-abs(result.ord - wine_test$quality)/(6-0))
+weighted.accu
+
+table(result.ord, wine_test$quality)
+```
+
+通过改变隐含层的数量、每层包含的神经元数目以及指定权衰减参数，可以找出最佳的神经网络参数。
 
 
 ## 安装 TensorFlow
 
 [SNNS](http://www.ra.cs.uni-tuebingen.de/SNNS/welcome.html) 是一个经典的神经网络模拟器，本书采用了 **RSNNS** 软件包来使用 SNNS 构建神经网络模型。不过，这个模拟器在已经不更新了。作者推荐使用 TensorFlow 或 PyTorch。
 
-TensorFlow 是一个端到端开源机器学习平台
-借助 TensorFlow，初学者和专家可以轻松地创建机器学习模型。
-
+TensorFlow 是一个端到端开源机器学习平台 借助 TensorFlow，初学者和专家可以轻松地创建机器学习模型。
 
 要安装 TensorFlow，则**必须首先安装 Python/Conda**，参见：<https://docs.anaconda.com/anaconda/install/index.html>。
 
-使用 **tensorflow** 软件包提供的 `install_tensorflow()` 函数可以快速安装 TensorFlow。这里将其安装到一个名为 “tensorflow”的 Conda 环境中。
+使用 **tensorflow** 软件包提供的 `install_tensorflow()` 函数可以快速安装 TensorFlow。这里将其安装到一个名为 "tensorflow"的 Conda 环境中。
 
 ```{r eval = FALSE}
 install.packages("tensorflow")
@@ -328,15 +414,14 @@ install.packages("keras")
 
 TensorFlow 的高阶 API 基于 Keras API 标准，用于定义和训练神经网络。Keras 通过用户友好的 API 实现快速原型设计、先进技术研究和生产。
 
-
 ### 安装 GPU 支持
 
 **注意**：如果仅学习的话，GPU 支持并非是必须的。
 
 要使用 GPU 加速，则**必须在系统中安装以下 NVIDIA® 软件**：
 
-*   [NVIDIA® GPU 驱动程序](https://www.nvidia.com/drivers) \- CUDA® 11.2 要求 450.80.02 或更高版本。
-*   [CUDA® 工具包](https://developer.nvidia.com/cuda-toolkit-archive)：TensorFlow 支持 CUDA® 11.2（TensorFlow 2.5.0 及更高版本）
-*   CUDA® 工具包附带的 [CUPTI](http://docs.nvidia.com/cuda/cupti/)。
-*   [cuDNN SDK 8.1.0](https://developer.nvidia.com/cudnn) [cuDNN 版本](https://developer.nvidia.com/rdp/cudnn-archive)。
-*   （可选）[TensorRT 6.0](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_6)，可缩短用某些模型进行推断的延迟时间并提高吞吐量。
+-   [NVIDIA® GPU 驱动程序](https://www.nvidia.com/drivers) - CUDA® 11.2 要求 450.80.02 或更高版本。
+-   [CUDA® 工具包](https://developer.nvidia.com/cuda-toolkit-archive)：TensorFlow 支持 CUDA® 11.2（TensorFlow 2.5.0 及更高版本）
+-   CUDA® 工具包附带的 [CUPTI](http://docs.nvidia.com/cuda/cupti/)。
+-   [cuDNN SDK 8.1.0](https://developer.nvidia.com/cudnn) [cuDNN 版本](https://developer.nvidia.com/rdp/cudnn-archive)。
+-   （可选）[TensorRT 6.0](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_6)，可缩短用某些模型进行推断的延迟时间并提高吞吐量。
