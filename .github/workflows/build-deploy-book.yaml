@@ -7,6 +7,10 @@ on:
 
 name: build-deploy-book
 
+env:
+  RENV_PATHS_ROOT: ~/.local/share/renv
+  MINICONDA_LIB_PATH: /Users/runner/Library/r-miniconda/
+
 jobs:
   build:
     runs-on: macos-latest
@@ -29,11 +33,18 @@ jobs:
         run: |
           brew install pandoc
 
+      - name: Get R and OS version
+        id: get-version
+        run: |
+          cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+          cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+        shell: Rscript {0}
+
       - name: Cache renv packages
         uses: actions/cache@v2
         with:
-          path: $HOME/.local/share/renv
-          key: r-${{ hashFiles('renv.lock') }}
+          path:  ${{ env.RENV_PATHS_ROOT }}
+          key: r-${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}
           restore-keys: r-
 
       - name: Cache bookdown results
