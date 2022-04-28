@@ -46,7 +46,7 @@ jobs:
       - name: Install TensorFlow
         run: |
           R -e 'install.packages("tensorflow")'
-          R -e 'tensorflow::install_tensorflow()'
+          R -e 'tensorflow::install_tensorflow(envname = "tensorflow")'
 
       - name: Install packages
         run: |
