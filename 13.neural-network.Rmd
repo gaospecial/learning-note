@@ -344,7 +344,7 @@ result.nom = apply(mlp.nom.nodecay$fittedTestValues, 1, class.func.nom)
 accu = sum(result.nom == wine_test$quality) / length(wine_test$quality)
 accu
 
-table(result.nom, wine_test$quality)
+table(wine_test$quality, result.nom)
 ```
 
 #### 定序预测模型
@@ -384,11 +384,111 @@ result.ord = apply(mlp.ord.nodecay$fittedTestValues, 1, class.func.ord)
 weighted.accu = mean(1-abs(result.ord - wine_test$quality)/(6-0))
 weighted.accu
 
-table(result.ord, wine_test$quality)
+table(wine_test$quality, result.ord)
 ```
 
 通过改变隐含层的数量、每层包含的神经元数目以及指定权衰减参数，可以找出最佳的神经网络参数。
 
+## 使用神经网络预测手机用户流失
+
+### 读取测试数据
+
+```{r}
+require(dplyr)
+require(readr)
+# 读取 10 个学习数据集
+learn = vector(mode = "list", 10)
+for (k in 1:10){
+  file = xfun::magic_path(paste0("ch3_mobile_learning_sample", k, "_imputed.csv"))
+  learn[[k]] = read_csv(file, locale = locale(encoding = "GB2312")) %>%
+    arrange(`设备编码`)
+}
+
+# 读取 10 个测试数据集
+test = lapply(1:10, function(k){
+  paste0("ch3_mobile_test_sample", k, "_imputed.csv") %>%
+    xfun::magic_path() %>%
+    read_csv(locale = locale(encoding = "GB2312")) %>%
+    arrange(`设备编码`)
+})
+```
+
+生成自变量矩阵。
+
+```{r}
+x_train = lapply(learn, function(x){
+  x[,-c(1,59)] %>% as.matrix() 
+})
+y_train = lapply(learn, function(y) y[[59]])
+
+x_valid = lapply(test, function(x){
+  x[,-c(1,59)] %>% as.matrix()
+})
+y_valid = lapply(test, function(y) y[[59]])
+```
+
+### 初始化神经网络
+
+初始化一个包含 3 个隐含层的神经网络。
+
+```{r}
+require(keras)
+model = keras_model_sequential() %>%
+  layer_flatten(input_shape = 57) %>%
+  layer_dense(units = 100, activation = "relu")  %>%
+  # layer_dense(units = 30, activation = "relu") %>%
+  # layer_dense(units = 30, activation = "relu") %>%
+  layer_dense(units = 2, activation = "softmax")
+
+model %>% compile(
+  loss = 'sparse_categorical_crossentropy',
+  optimizer = 'adam',
+  metrics = c("accuracy")
+)
+```
+
+### 训练神经网络
+
+这里，依次使用 10 个插值数据集对神经网络进行训练。训练后的分类准确度可以超过 90%。
+
+```{r}
+for (i in 1:length(x_train)){
+  model %>% fit(
+    x_train[[i]],
+    y_train[[i]],
+    epochs = 25,
+    verbose = 1
+  )
+}
+```
+
+### 测试神经网络
+
+测试神经网络在 10 个测试数据集上的表现，发现测试的分类准确度要低一些，仅有 90% 多。
+
+```{r}
+for (i in 1:length(x_valid)){
+  model %>% evaluate(
+    x_valid[[i]],
+    y_valid[[i]],
+    verbose = 2
+  )
+}
+```
+
+### 预测结果
+
+```{r}
+prediction = model %>%
+  predict(x_valid[[1]]) %>%
+  apply(MARGIN = 1, FUN = which.max)
+
+table(y_valid[[1]], prediction-1)
+```
+
+### TensorFlow 神经网络的优化
+
+在上面使用的 `keras_model_sequential()` 神经网络中，网络的层数（layer）、节点数（units）、训练时候（epoch）的设置都会影响网络的准确性。目前保留的参数，可以达到预测准确性超 93%。
 
 ## 安装 TensorFlow
 
