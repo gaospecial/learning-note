@@ -43,15 +43,15 @@ jobs:
           key: bookdown-${{ hashFiles('**/*Rmd') }}
           restore-keys: bookdown-
 
+      - name: Install TensorFlow
+        run: |
+          R -e 'install.packages("tensorflow")'
+          R -e 'tensorflow::install_tensorflow()'
+
       - name: Install packages
         run: |
           R -e 'install.packages("renv")'
           R -e 'renv::restore()'
-
-      - name: Install TensorFlow
-        run: |
-          R -e 'install.packages("tensorflow")'
-          R -e 'install_tensorflow()'
 
       - name: Build book
         run: make gitbook
