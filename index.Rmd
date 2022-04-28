@@ -51,7 +51,8 @@ options(bookdown.post.latex = function(x) {
   x
 })
 
-options(tinytex.verbose = TRUE)
+options(tinytex.verbose = TRUE,
+        max.print = 30)
 
 require(showtext)
 
