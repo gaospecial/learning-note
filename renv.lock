@@ -194,6 +194,14 @@
         "foreach"
       ]
     },
+    "TeachingDemos": {
+      "Package": "TeachingDemos",
+      "Version": "2.12",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "41e566d7eab7307a31b3dee3b203c7e0",
+      "Requirements": []
+    },
     "XML": {
       "Package": "XML",
       "Version": "3.99-0.9",
@@ -209,6 +217,16 @@
       "Repository": "CRAN",
       "Hash": "4f57884290cc75ab22f4af9e9d4ca862",
       "Requirements": []
+    },
+    "animation": {
+      "Package": "animation",
+      "Version": "2.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "b44dfd6eca87dd78c1b8acc67887c615",
+      "Requirements": [
+        "magick"
+      ]
     },
     "arules": {
       "Package": "arules",
@@ -1793,6 +1811,21 @@
         "png",
         "rappdirs",
         "withr"
+      ]
+    },
+    "rgl": {
+      "Package": "rgl",
+      "Version": "0.108.3.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ef0aec7aec3cd82061c943753b659a6f",
+      "Requirements": [
+        "R6",
+        "htmltools",
+        "htmlwidgets",
+        "jsonlite",
+        "knitr",
+        "magrittr"
       ]
     },
     "rlang": {

@@ -1,0 +1,462 @@
+# 概率论和数理统计 {#probability-statistics}
+
+http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm
+
+```{r}
+# install.packages("TeachingDemos")
+library("TeachingDemos")
+```
+
+## 掷骰子 {#roll-the-dice}
+
+```{r}
+dice(10, ndice=2, plot.it=T)
+```
+
+
+### Efron's dice
+
+see: <http://mathworld.wolfram.com/EfronsDice.html>。
+
+```{r}
+ ed <- list( rep( c(4,0), c(4,2) ),
+ rep(3,6), rep( c(6,2), c(2,4) ),
+ rep( c(5,1), c(3,3) ) )
+     
+ tmp <- dice( 10000, ndice=4 )
+ dice(10,ndice=4,plot.it=T)
+ ed.out <- sapply(1:4, function(i) ed[[i]][ tmp[[i]] ] )
+     
+ mean(ed.out[,1] > ed.out[,2])
+ mean(ed.out[,2] > ed.out[,3])
+ mean(ed.out[,3] > ed.out[,4])
+ mean(ed.out[,4] > ed.out[,1])
+```
+
+
+
+## Buffon's needle
+
+```{r}
+# install.packages("animation")
+library(animation)
+```
+
+
+```{r}
+oopt = ani.options(nmax = 1000, interval = 0)
+opar = par(mar = c(3, 2.5, 0.5, 0.2), pch = 20, mgp = c(1.5, 0.5, 0))
+buffon.needle()
+```
+
+
+
+
+
+
+
+## sample() - sampling from a finite set
+
+```{r}
+# sample(x, size, replace = FALSE, prob = NULL)
+
+# Lotto genrator (sampling from 1:39 without replacement)
+
+sample(39, 7) # or: sample(1:39, 7)
+
+# Ten rows of LOTTO (surely one of these must win?!?)
+
+replicate(10, sample(39, 7))
+```
+
+```{r}
+# Use the argument prob, if you need to specify different
+# probabilities for the different outcomes.
+
+# Sometimes we want sampling with replacement; this is the
+# same as drawing an i.i.d. sequence of values from the
+# corresponding discrete distribution.
+
+# Simulate dice throws
+
+fair.die <- sample(1:6, 100, replace = TRUE)
+table(fair.die)
+```
+
+Simulate dice throws with a loaded die.
+
+
+```{r}
+loaded.die <- sample(1:6, 100, replace = TRUE, prob = c(2, 2, 2, 2, 2, 5))
+table(loaded.die)
+```
+
+## Discrete random variables and their distributions
+
+
+1. Binomial 
+
+```{r}
+dbinom(x=2,size=20,prob=0.5)
+pbinom(q=2,size=20,prob=0.5)
+qbinom(p=0.4,size=20,prob=0.5)
+rbinom(n=5,size=20,prob=0.5)
+
+
+plot(dbinom(0:20,size=20,prob=0.5),type="h")
+plot(dbinom(0:20,size=20,prob=0.8),type="h")
+```
+
+2. The Hypergeometric Distribution
+
+```{r}
+dhyper(x=2, m=10, n=30, k=6)
+phyper(q=2, m=10, n=30, k=6)
+qhyper(0.3, m=10, n=30, k=6)
+rhyper(nn=10, m=10, n=30, k=6)
+```
+
+3. The Geometric Distribution,let X count the number of failures before the first successes
+
+```{r}
+dgeom(4,prob=0.8)
+pgeom(4, prob = 0.8)
+qgeom(0.4,prob=0.8)
+rgeom(10,prob=0.8)
+
+
+plot(dgeom(0:20,prob=0.5),type="h")
+plot(dgeom(0:20,prob=0.8),type="h")
+```
+
+4. The Negative Binomial Distribution, let X count the number of failures before r successes
+
+```{r}
+dnbinom(x=5,size=3,prob=0.4)   
+pnbinom(5,size=3,prob=0.4)
+qnbinom(0.5,size=3,prob=0.4)
+rnbinom(n=10,size=3,prob=0.4)
+
+plot(dnbinom(0:20,size=5,p=0.5),type="h")
+```
+
+5. Poisson distributino
+
+```{r}
+dpois(x=0,lambda=2.4)
+ppois(q=10,lambda=2.4)
+qpois(p=0.9,lambda=2.4)
+rpois(n=10,lambda=2.4)
+
+plot(dpois(0:20,lambda=1),type="h")
+```
+
+
+```{r}
+x <- 0:20
+plot(x, ppois(x, 1), type="s", lty=1,ylab="F(x)", main="Poisson approx of binomial")
+lines(x, pbinom(x, 100, 0.01),type="s",col=2,lty=2)
+legend("bottomright",legend=c("Poisson","Binomial"),lty=1:2,col=1:2)
+```
+
+6.  Poisson and normal approximation of binomial probabilities, with estimated parameters
+
+```{r}
+
+#P(X<=k)=pbinom(k,n,p)
+#Poisson approximation: P(X<=k) app ppois(k,np)
+#Normal approximation: P(X<=k) app pnorm(k,np,npq)
+
+
+apprx <- function(n, p, R = 1000, k = 6) {
+  trueval <- pbinom(k, n, p) # true binomial probability
+  prob.zcc <- prob.zncc <- prob.pois <- NULL  
+  q<-1-p
+  for (i in 1:R) {
+    x <- rnorm(n, n * p, sqrt(n * p * q))
+    z.cc <- ((k + .5) - mean(x))/sd(x) # with cont. correction
+    prob.zcc[i] <- pnorm(z.cc)
+    z.ncc <- (k - mean(x))/sd(x) # no cont. correction
+    prob.zncc[i] <- pnorm(z.ncc)    
+    y <- rpois(n, n * p)
+    prob.pois[i] <- length(y[y <= k])/n
+  }
+ list(prob.zcc = prob.zcc, prob.zncc = prob.zncc, 
+       prob.pois = prob.pois, trueval = trueval)
+}
+R <- 1000
+set.seed(10)
+out <- apprx(n = 200, p = .03, k = 6, R = 1000)
+# windows(6,5)
+ plot(1:R, out$prob.pois, type = "l", col = "green", xlab = "Runs", 
+      main = expression(paste("Simulated Probabilities: ", 
+             n==200, ", ", p==0.03, sep="")),
+      ylab = "Probability", ylim = c(.3, .7))
+ abline(h = out$trueval, col="red", lty=2)
+ lines(1:R, out$prob.zcc, lty = 1, col = "purple")
+ lines(1:R, out$prob.zncc, lty = 1, col = "orange")
+ legend("bottomleft", c("Poisson", "Normal (with cc)", 
+          "Normal (w/o cc)"),
+        lty = c(1), col = c("green", "purple", "orange"))
+
+
+set.seed(10)
+out <- apprx(n = 200, p = .03, k = 6, R = 1000)
+# windows(6,5)
+boxplot(out$prob.pois, boxwex = 0.25, at = 1:1 - .25,
+        col = "green",
+        main = expression(paste("Approximating Binomial Probability: ", 
+                                n==200, ", ", p==0.03, sep="")),
+        ylab = "Probablity", 
+        ylim = c(out$trueval - 0.2, out$trueval + 0.25))
+boxplot(out$prob.zcc, boxwex = 0.25, at = 1:1 + 0, add = T,
+         col = "purple")
+boxplot(out$prob.zncc, boxwex = 0.25, at = 1:1 + 0.25, add = T,
+         col = "orange" )
+abline(h = out$trueval, col = "red", lty=2)
+legend("topleft", c("Poisson", "Normal (with cc)", "Normal (w/o cc)"), 
+           fill = c("green", "purple", "orange"))
+```
+##  Random variables and their distribution
+
+1. Binomial 
+
+```{r}
+dbinom(x=2,size=10,prob=0.4)
+pbinom(q=2,size=10,prob=0.4)
+qbinom(p=0.4,size=10,prob=0.4)
+rbinom(n=5,size=10,prob=0.4)
+```
+
+2. The Hypergeometric Distribution
+
+```{r}
+dhyper(x=2, m=10, n=30, k=6)
+ phyper(q=2, m=10, n=30, k=6)
+ qhyper(0.3, m=10, n=30, k=6)
+ rhyper(nn=10, m=10, n=30, k=6)
+```
+
+3. The Geometric Distribution,let X count the number of failures before the first successes
+
+```{r}
+dgeom(4,prob=0.8)
+pgeom(4, prob = 0.8)
+qgeom(0.4,prob=0.8)
+rgeom(10,prob=0.8)
+```
+
+4.The Negative Binomial Distribution, let X count the number of failures before r successes
+
+```{r}
+dnbinom(x=5,size=3,prob=0.4)   
+pnbinom(5,size=3,prob=0.4)
+qnbinom(0.5,size=3,prob=0.4)
+rnbinom(n=10,size=3,prob=0.4)
+```
+
+5. Poisson distributino
+
+```{r}
+dpois(x=0,lambda=2.4)
+ppois(q=10,lambda=2.4)
+qpois(p=0.9,lambda=2.4)
+rpois(n=10,lambda=2.4)
+
+
+ par(mfrow = c(2, 1))
+ x <- seq(-0.01, 5, 0.01)
+ plot(x, ppois(x, 1), type="s", ylab="F(x)", main="Poisson(1) CDF")
+ plot(x, pbinom(x, 100, 0.01),type="s", ylab="F(x)",main="Binomial(100, 0.01) CDF")
+```
+
+6. Normal distribution
+
+```{r}
+dnorm(0,mean=0,sd=1)
+pnorm(0)
+qnorm(2.5/100,lower.tail=F)
+rnorm(10,mean=1,sd=1.5)
+```
+
+some plots
+
+```{r}
+x <- seq(-4, 4, length = 401)
+plot(x, dnorm(x), type = 'l') # N(0, 1)
+# N(1, 1.5^2):
+lines(x, dnorm(x, mean = 1, sd = 1.5), lty = 'dashed')
+```
+
+
+```{r}
+u <- seq(0, 1, length=401)
+plot(u, qnorm(u), 'l')
+# lower.tail = FALSE gives q(1-u)
+lines(u, qnorm(u, lower.tail = FALSE), lty = 'dashed')
+```
+
+
+```{r}
+n<-1000
+x<-rnorm(n)
+xh<-hist(x, probability = TRUE)
+xh
+z<-seq(-3,3,0.01)
+y <- dnorm(z, mean = 0, sd = 1)
+lines(x = z, y = y, col = "blue")
+```
+
+7. exponential distribution
+
+```{r}
+q = c(.2,.5,.1,.1,.1)
+p = 0.5
+dexp(x, rate = 1, log = FALSE)
+pexp(q, rate = 1, lower.tail = TRUE, log.p = FALSE)
+qexp(p, rate = 1, lower.tail = TRUE, log.p = FALSE)
+rexp(n, rate = 1)
+```
+
+8. Uniform distribution
+
+```{r}
+dunif(x, min=0, max=1, log = FALSE)
+punif(q, min=0, max=1, lower.tail = TRUE, log.p = FALSE)
+qunif(p, min=0, max=1, lower.tail = TRUE, log.p = FALSE)
+runif(n, min=0, max=1)
+```
+
+9. other distribution
+
+
+http://zoonek2.free.fr/UNIX/48_R/07.html
+
+## exponential distribution
+
+```{r}
+#cumulative distribution function
+curve(pexp(x,rate=0.5), xlim=c(0,10), col=1, lwd=3,
+      main='Exponential Probability Distribution Function')
+curve(pexp(x,rate=1), xlim=c(0,10), col=2, lwd=2, lty=2,
+      add=T)
+curve(pexp(x,rate=5), xlim=c(0,10), col=3, lwd=2, lty=3,
+      add=T)
+curve(pexp(x,rate=10), xlim=c(0,10), col=4, lwd=2, lty=4,
+      add=T)
+legend(par('usr')[2], par('usr')[4], xjust=1,
+       c('rate=0.5','rate=1', 'rate=2','rate=10'),
+       lwd=2, lty=c(1,2,3,4),
+       col=1:4)
+```
+
+
+```{r}
+#density
+curve(dexp(x,rate=0.5), xlim=c(0,10), col=1, lwd=3,
+      main='Exponential Probability Distribution Function')
+curve(dexp(x,rate=1), xlim=c(0,10), col=2, lwd=2, lty=2,
+      add=T)
+curve(dexp(x,rate=5), xlim=c(0,10), col=3, lwd=2, lty=3,
+      add=T)
+curve(dexp(x,rate=10), xlim=c(0,10), col=4, lwd=2, lty=4,
+      add=T)
+legend(par('usr')[2], par('usr')[4], xjust=1,
+       c('rate=0.5','rate=1', 'rate=2','rate=10'),
+       lwd=2, lty=1:4,
+       col=1:4)
+```
+
+
+```{r}
+###normal
+#cumulative distribution function
+curve(pnorm(x), xlim=c(-5,5), col='red', lwd=3)
+title(main='Cumulative gaussian distribution function')
+curve(pnorm(x,1,1), xlim=c(-5,5), col='green', lwd=3,add=T)
+curve(pnorm(x,1,2),  xlim=c(-5,5), col='black', lwd=3,add=T)
+legend(-par('usr')[2], par('usr')[4], xjust=-0.5,
+       c('standard norm', 'normal(1,1)','normal(1,2)'),
+       lwd=2, col=c('red','green','black'))
+```
+
+
+```{r}
+#density
+curve(dnorm(x), xlim=c(-5,5), col='red', lwd=3)
+curve(dnorm(x,1,1), add=T, col='green', lty=2, lwd=3)
+curve(dnorm(x,1,2), add=T, col='black', lty=3, lwd=3)
+
+legend(par('usr')[2], par('usr')[4], xjust=1,
+       c('standard normal', 'normal(1,1)','normal(1,2)'),
+       lwd=2, lty=c(1,2,3),
+       col=c('red','green','black'))
+```
+
+
+```{r}
+###mixture of normal
+ 
+m <- c(-2,0,2)    # Means
+p <- c(.3,.4,.3)  # Probabilities
+s <- c(1, 1, 1)   # Standard deviations
+ 
+curve( p[2]*dnorm(x, mean=m[2], sd=s[2]),
+       col = "green", lwd = 3, 
+       xlim = c(-5,5),ylim=c(0,0.23),
+       main = "The three gaussian distributions in our mixture",
+       xlab = "", ylab = "")
+curve( p[1]*dnorm(x, mean=m[1], sd=s[1]),
+       col="red", lwd=3, add=TRUE)
+curve( p[3]*dnorm(x, mean=m[3], sd=s[3]),
+       col="blue", lwd=3, add=TRUE)
+
+
+curve(p[1]*dnorm(x, mean=m[1], sd=s[1])+p[2]*dnorm(x, mean=m[2], sd=s[2])+p[3]*dnorm(x, mean=m[3], sd=s[3]),col="black", lwd=3, add=TRUE)
+```
+http://personal.kenyon.edu/hartlaub/MellonProject/Bivariate2.html
+
+
+```{r eval=FLASE}
+### bivariate normal density with matlab
+
+
+###Plot of mixtures of bivariate normal with R
+
+# install.packages("rgl")
+library(rgl)
+ 
+dnorm2d<-function(x,y,mu1,mu2,sigma1,sigma2,rho){
+    xoy = ((x-mu1)^2/sigma1^2 - 2*rho * (x-mu1)/sigma1 * (y-mu2)/sigma2 + (y-mu2)^2/sigma2^2)/(2 * (1 - rho^2))
+    density = exp(-xoy)/(2 * pi *sigma1*sigma2*sqrt(1 - rho^2))
+    density
+}
+
+
+
+x<-seq(-5,5,by=0.1)
+y<-seq(-5,5,by=0.1)
+
+ff1<-function(x,y){0.5*dnorm2d(x,y,0,0,1,1,0)+0.5*dnorm2d(x,y,0,0,1,1,0.5)}
+
+ff2<-function(x,y){0.5*dnorm2d(x,y,0,0,1,1,0.5)+0.5*dnorm2d(x,y,0,0,1,1,-0.5)}
+
+
+ff3<-function(x,y){0.3*dnorm2d(x,y,0,0,1,1,0)+0.7*dnorm2d(x,y,2.5,2.5,1.75,1.75,0)}
+
+open3d() # This will open a small window where you can plot 3D figures on.
+
+z<-outer(x,y,ff1) 
+persp3d(x,y,z,col="green",main="ff1")
+
+open3d()
+z<-outer(x,y,ff2)
+persp3d(x,y,z,col="green",main="ff2")
+
+open3d()
+z<-outer(x,y,ff3)
+persp3d(x,y,z,col="green",main="ff3")
+
+ 
+```
+
