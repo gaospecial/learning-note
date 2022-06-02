@@ -1,0 +1,57 @@
+# 处理 Office 文件 {#officer}
+
+
+## 批量修改 PPT 的文件名 
+
+
+```{r eval=FALSE}
+files = list.files("E:/资源/PPT 总汇/","*.pptx", full.names = TRUE,recursive = TRUE)
+```
+
+`read_pptx()` 读取 `*.pptx` 文件，`pptx_summary()` 获取文件的基本信息。文件名取自第一章 PPT 中最长的中文字符串。
+
+为了判断字符的语言，可以使用多个软件包：
+
+- **textcat**[@R-textcat] 软件包的 `textcat()` 函数。对中文支持很差。
+- **fastText**[@R-fastText] 软件包的 `language_identification()` 函数。虽然支持中文，对中日字符的区分有问题，总是把中文识别为日文。
+- **cld3**[@R-cld3] 软件包的 `detect_language()` 函数。R Wrapper for Google's Compact Language Detector 3，识别准确率最高。
+
+
+
+```{r eval=FALSE}
+library(officer)
+
+id_name = stringr::str_extract(files, "[^/\\.]*[0-9]{13}[^/\\.]*")
+student_id = stringr::str_extract(id_name, "[0-9]{13}") # 学校
+student_name = stringr::str_remove(id_name, "[0-9]{13}") |> trimws() # 姓名
+ppt_title = lapply(files, function(file){
+  d = read_pptx(file) |>
+    pptx_summary() |>
+    dplyr::filter(slide_id == 1, content_type == "paragraph") |>
+    dplyr::mutate(lang = cld3::detect_language(text)) |>
+    dplyr::filter(lang == "zh",
+                  !stringr::str_detect(text, "汇报人|答辩人|华中农业大学|资源与环境学院|日期|[0-9]{13}|土壤学")) |>
+    dplyr::pull(text) |>
+    trimws()
+  if (length(d) > 0) return(d[[1]])
+  return(basename(file) |> stringr::str_remove("\\.pptx"))
+}) |>
+  unlist()
+
+path_to = "E:/资源/PPT 总汇/"
+success = sapply(seq_along(ppt_title), function(i){
+  id = student_id[[i]]
+  name = student_name[[i]]
+  content = ppt_title[[i]] |> 
+    stringr::str_remove(id) |>
+    stringr::str_remove(name) |>
+    trimws()
+  newname = paste(id, name, content, sep = " ")
+  filename = xfun::with_ext(newname, ".pptx")
+  to = file.path(path_to, filename)
+  file.rename(files[[i]], to)
+})
+
+```
+
+
