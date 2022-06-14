@@ -1,0 +1,47 @@
+# R Markdown {#rmarkdown}
+
+## 设置选项钩子附上图片下载链接
+
+通过设置选项钩子，可以在图片输出设备多于 1 个时候，提供图片的下载链接。
+
+```{r}
+knitr::opts_hooks$set(dev = function(options){
+  if (length(options$dev) > 1){
+    x = paste0("[", options$dev, "](", knitr::fig_path(options$dev), ")",
+               collapse = " | ")
+    options$fig.cap = paste(options$fig.cap, x, sep = " ")
+  }
+  options
+})
+```
+
+下图中，使用了 `dev = c('png', 'pdf', "tiff", "svg")` 等 4 种图像设备，由于 `dev` 选项钩子的存在，将自动在图注中添加图片的下载链接。
+
+```{r dev = c('png', 'pdf', "tiff", "svg"), fig.cap="This is a plot."}
+plot(1:10)
+```
+
+图注也可以使用文本引用，不影响钩子的应用效果。
+
+(ref:figcap-dev-hooks) 使用**选项钩子**在图注中添加下载链接。
+
+```{r dev = c('png', 'pdf'), fig.cap="(ref:figcap-dev-hooks)"}
+plot(1:10)
+```
+
+
+
+## 使用自定义图形设备
+
+> All possible devices supported by knitr are: "bmp", "postscript", "pdf", "png", "svg", "jpeg", "pictex", "tiff", "win.metafile", "cairo_pdf", "cairo_ps", "quartz_pdf", "quartz_png", "quartz_jpeg", "quartz_tiff", "quartz_gif", "quartz_psd", "quartz_bmp", "CairoJPEG", "CairoPNG", "CairoPS", "CairoPDF", "CairoSVG", "CairoTIFF", "Cairo_pdf", "Cairo_png", "Cairo_ps", "Cairo_svg", "svglite", "ragg_png", and "tikz".
+> 
+> From: https://bookdown.org/yihui/rmarkdown-cookbook/graphical-device.html
+
+是不是可以使用 `ppt` 设备呢？
+
+```{r}
+library(export)
+```
+
+
+
