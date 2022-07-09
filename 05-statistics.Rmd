@@ -417,7 +417,7 @@ curve(p[1]*dnorm(x, mean=m[1], sd=s[1])+p[2]*dnorm(x, mean=m[2], sd=s[2])+p[3]*d
 http://personal.kenyon.edu/hartlaub/MellonProject/Bivariate2.html
 
 
-```{r eval=FLASE}
+```{r eval=FALSE}
 ### bivariate normal density with matlab
 
 
