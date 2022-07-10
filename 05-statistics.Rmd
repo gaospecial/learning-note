@@ -37,6 +37,8 @@ see: <http://mathworld.wolfram.com/EfronsDice.html>。
 
 ## Buffon's needle
 
+See: <https://yihui.org/animation/example/buffon-needle/>
+
 ```{r}
 # install.packages("animation")
 library(animation)
@@ -44,7 +46,7 @@ library(animation)
 
 
 ```{r}
-oopt = ani.options(nmax = 1000, interval = 0)
+oopt = ani.options(nmax = 5, interval = 0)
 opar = par(mar = c(3, 2.5, 0.5, 0.2), pch = 20, mgp = c(1.5, 0.5, 0))
 buffon.needle()
 ```
