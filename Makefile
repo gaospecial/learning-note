@@ -9,3 +9,6 @@ pdf:
 
 gitbook:
 	Rscript --quiet _render.R "bookdown::gitbook"
+
+deploy:
+	./_deploy.sh
