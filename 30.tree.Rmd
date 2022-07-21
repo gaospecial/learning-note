@@ -1,0 +1,196 @@
+# ggtree 代码解析 {#ggtree-as-phylo-hclust2}
+
+**ggtree** 可以处理进化树及聚类等一系列相关的信息。
+
+```{r}
+library(ape)
+data("bird.orders")
+hc = as.hclust(bird.orders)
+phylo = as.phylo.hclust(hc)
+dend = as.dendrogram(hc)
+```
+
+
+```{r}
+plot(bird.orders, main = paste0("class = ", class(bird.orders)))
+plot(hc, main = paste0("class = ", class(hc)), cex = 1)
+plot(dend, main = paste0("class = ", class(dend)), horiz = TRUE)
+plot(phylo, main = paste0("class = ", class(phylo)))
+```
+
+
+```{r}
+library(ggplot2)
+library(ggtree)
+ggtree(bird.orders) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(bird.orders)))
+ggtree(hc) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(hc)))
+ggtree(dend) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(dend)))
+ggtree(phylo) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(phylo)))
+```
+
+## 新函数
+
+```{r}
+phylo2 = ggtree:::as.phylo.hclust2(hc, hang = 1)
+
+plot(phylo, main = paste0("class = ", class(phylo)))
+plot(phylo2,  main = paste0("class = ", class(phylo2)))
+```
+
+```{r}
+ggtree(phylo) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(phylo)))
+ggtree(phylo2) + geom_tiplab() + xlim(NA, 35) + labs(title = paste0("class = ", class(phylo2)))
+```
+
+## 数据结构
+
+使用 `str()` 函数可以解析 R 语言中对象的结构。
+
+R 语言中复杂对象都是一个 List，我们可以看到这两个 List 均包含 4 个数值以及 2 个属性。
+
+
+```{r}
+str(phylo)
+```
+
+```{r}
+str(phylo2)
+```
+
+不妨比较一下 List 中各个变量的数值是否相同。
+
+
+```{r}
+slots = names(phylo)
+for (i in seq_along(slots)){
+  slot = slots[[i]]
+  comparison = identical(phylo[[slot]], phylo2[[slot]])
+  print(paste0(slot, ": ", comparison))
+}
+```
+
+由此可见，只有对象中的 `edge.length` 的数值不同。其它的数值（包括属性）都是一样的。
+
+这里需要实现了解一下 `edge` 这个变量的含义。它是一个 22 × 2 的矩阵，数值均为整数。这个整数实际上是树上节点的编号。树状结构的节点有两类，一类是末端节点，另一类是相连的节点。第一类节点即是树的 tip，第二类节点是树的 internal nodes。
+
+```{r}
+phylo
+```
+
+该树状结构总共有 23 个 tip 和 22 个 internal nodes。
+
+进化树的本质也是图，把这些节点都视为图上的 node 的话，则每一行即定义了一个图上的边。
+
+```{r}
+library(igraph)
+g = graph_from_data_frame(phylo$edge)
+plot(g, layout = layout_as_tree)
+```
+
+这个图的拓扑结构与进化树是一样的。
+
+了解这些信息，是我们进一步理解进化树对象的数据操作的前提。
+
+## 源代码解析
+
+从上面的结果来看，`as.phylo.hclust2()` 做的事情就是修改了对象中 `edge.length` 的值。接下来我们看它是如何修改这个值的。
+
+`as.phylo.hclust()` 的源代码如下：
+
+```{r}
+as.phylo.hclust = function (x, ...){
+  N <- dim(x$merge)[1]
+  edge <- matrix(0L, 2 * N, 2)
+  edge.length <- numeric(2 * N)
+  node <- integer(N)
+  node[N] <- N + 2L
+  cur.nod <- N + 3L
+  j <- 1L
+  for (i in N:1) {
+    edge[j:(j + 1), 1] <- node[i]
+    for (l in 1:2) {
+      k <- j + l - 1L
+      y <- x$merge[i, l]
+      if (y > 0) {
+        edge[k, 2] <- node[y] <- cur.nod
+        cur.nod <- cur.nod + 1L
+        edge.length[k] <- x$height[i] - x$height[y]
+      }
+      else {
+        edge[k, 2] <- -y
+        edge.length[k] <- x$height[i]
+      }
+    }
+    j <- j + 2L
+  }
+  if (is.null(x$labels)) 
+    x$labels <- as.character(1:(N + 1))
+  obj <- list(edge = edge, edge.length = edge.length/2, tip.label = x$labels, 
+              Nnode = N)
+  class(obj) <- "phylo"
+  reorder(obj)
+}
+```
+
+`as.phylo.hclust2()` 的源代码如下（这里首先列出了函数中使用的另一个小函数）：
+
+```{r}
+edge2vec <- function(tr) {
+  parent <- tr$edge[,1]
+  child <- tr$edge[,2]
+  
+  ## use lookup table
+  pvec <- integer(max(tr$edge))
+  pvec[child] <- parent
+  return(pvec)
+}
+
+as.phylo.hclust2 = function(x, hang = 0.1, ...){
+  h = x
+  tr = ape::as.phylo(x)
+  ev = edge2vec(tr)
+  
+  nodes <- integer(length(h$height))
+  for (i in seq_along(nodes)) {
+    j <- h$merge[i,]
+    if (any(j < 0)) {
+      j2 <- j[j < 0][1]
+      nodes[i] <- ev[abs(j2)]
+    } else {
+      nodes[i] <- ev[nodes[j[1]]]
+    }
+  }
+  
+  len <- numeric(max(tr$edge))
+  len[nodes] <- h$height
+  pn <- ev[nodes]
+  pn[pn == 0] <- treeio::rootnode(tr)
+  len[nodes] <- len[pn] - len[nodes]
+  len[1:Ntip(tr)] <- hang #max(h$height)/10
+  
+  tr$edge.length <- len[tr$edge[,2]]
+  return(tr)
+}
+```
+
+
+## 其它相关对象的数据结构
+
+`phylo` 前面已经介绍过，在此不再赘述。
+
+```{r}
+str(bird.orders)
+```
+
+`hclust` 对象是一个含有 6 个变量的 List。
+
+```{r}
+str(hc)
+```
+
+`dend` 对象是一个多层嵌套的 `dendrogram` 对象（像俄罗斯套娃）。
+
+```{r}
+str(dend)
+```
+
