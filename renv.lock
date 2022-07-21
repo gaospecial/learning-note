@@ -11,6 +11,11 @@
   "Bioconductor": {
     "Version": "3.15"
   },
+  "Python": {
+    "Version": "3.9.12",
+    "Type": "conda",
+    "Name": "tf"
+  },
   "Packages": {
     "BART": {
       "Package": "BART",
@@ -637,10 +642,10 @@
     },
     "devEMF": {
       "Package": "devEMF",
-      "Version": "4.0-2",
+      "Version": "4.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6d64bee9dcf472c0ecdf01f841dee4f6",
+      "Hash": "3b9b8fdf440878e3099aa57a523c1098",
       "Requirements": []
     },
     "diffobj": {
@@ -1986,10 +1991,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.15.4",
+      "Version": "0.15.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c1078316e1d4f70275fc1ea60c0bc431",
+      "Hash": "6a38294e7d12f5d8e656b08c5bd8ae34",
       "Requirements": []
     },
     "reshape2": {
