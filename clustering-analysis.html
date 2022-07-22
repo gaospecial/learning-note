@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 6 章 聚类分析 | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content="聚类分析是一种无监督数据挖掘方法，它基于观测之间的距离度量将观测分组。聚类分析可用于对客户进行细分，以便为细分客户群体指定针对性营销策略。 常用的聚类方法有： \(k\) 均值聚类法和层次聚类法。  6.1 商场客户聚类 ch5_mall.csv 数据集记录了一家商场的 200 位客户的信息。这里使用客户年龄（Age）、年收入（Annual Income）和消费得分（Spending...">
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 6 章 聚类分析 | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content="聚类分析是一种无监督数据挖掘方法，它基于观测之间的距离度量将观测分组。聚类分析可用于对客户进行细分，以便为细分客户群体指定针对性营销策略。 常用的聚类方法有： \(k\) 均值聚类法和层次聚类法。  6.1 商场客户聚类 ch5_mall.csv 数据集记录了一家商场的 200 位客户的信息。这里使用客户年龄（Age）、年收入（Annual Income）和消费得分（Spending...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 6 章 聚类分析 | 数据科学学习笔记">
+<meta name="twitter:description" content="聚类分析是一种无监督数据挖掘方法，它基于观测之间的距离度量将观测分组。聚类分析可用于对客户进行细分，以便为细分客户群体指定针对性营销策略。 常用的聚类方法有： \(k\) 均值聚类法和层次聚类法。  6.1 商场客户聚类 ch5_mall.csv 数据集记录了一家商场的 200 位客户的信息。这里使用客户年龄（Age）、年收入（Annual Income）和消费得分（Spending...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="active" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="clustering-analysis" class="section level1" number="6">
+<h1>
+<span class="header-section-number">第 6 章</span> 聚类分析<a class="anchor" aria-label="anchor" href="#clustering-analysis"><i class="fas fa-link"></i></a>
+</h1>
+<p>聚类分析是一种无监督数据挖掘方法，它基于观测之间的距离度量将观测分组。聚类分析可用于对客户进行细分，以便为细分客户群体指定针对性营销策略。</p>
+<p>常用的聚类方法有： <span class="math inline">\(k\)</span> 均值聚类法和层次聚类法。</p>
+<div id="商场客户聚类" class="section level2" number="6.1">
+<h2>
+<span class="header-section-number">6.1</span> 商场客户聚类<a class="anchor" aria-label="anchor" href="#%E5%95%86%E5%9C%BA%E5%AE%A2%E6%88%B7%E8%81%9A%E7%B1%BB"><i class="fas fa-link"></i></a>
+</h2>
+<p><code>ch5_mall.csv</code> 数据集记录了一家商场的 200 位客户的信息。这里使用客户年龄（Age）、年收入（Annual Income）和消费得分（Spending Score）对客户进行聚类。</p>
+<div class="sourceCode" id="cb268"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">=</span> <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="st">"ch5_mall.csv"</span><span class="op">)</span></span>
+<span><span class="va">mall</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>Income <span class="op">=</span> <span class="fl">4</span>, Score <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">mall</span></span></code></pre></div>
+<pre><code>## # A tibble: 200 × 5
+##    CustomerID Gender   Age Income Score
+##         &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1          1 Male      19     15    39
+##  2          2 Male      21     15    81
+##  3          3 Female    20     16     6
+##  4          4 Female    23     16    77
+##  5          5 Female    31     17    40
+##  6          6 Female    22     17    76
+##  7          7 Female    35     18     6
+##  8          8 Female    23     18    94
+##  9          9 Male      64     19     3
+## 10         10 Female    30     19    72
+## # … with 190 more rows
+## # ℹ Use `print(n = ...)` to see more rows</code></pre>
+<p>为了度量两个观测之间的距离，通常在聚类前对各连续变量进行标准化。<code><a href="https://rdrr.io/r/base/scale.html">scale()</a></code> 函数的参数 <code>center = TURE</code> 表示减去均值，<code>scale = TRUE</code> 表示除以标准偏差。因此标准化后的数据均值为 0，标准差为 1。</p>
+<div class="sourceCode" id="cb270"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="va">stdmall</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">mall</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, center <span class="op">=</span> <span class="cn">TRUE</span>, scale <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">stdmall</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##       Age              Income             Score          
+##  Min.   :-1.4926   Min.   :-1.73465   Min.   :-1.905240  
+##  1st Qu.:-0.7230   1st Qu.:-0.72569   1st Qu.:-0.598292  
+##  Median :-0.2040   Median : 0.03579   Median :-0.007745  
+##  Mean   : 0.0000   Mean   : 0.00000   Mean   : 0.000000  
+##  3rd Qu.: 0.7266   3rd Qu.: 0.66401   3rd Qu.: 0.882916  
+##  Max.   : 2.2299   Max.   : 2.91037   Max.   : 1.889750</code></pre>
+<div id="k-means-聚类" class="section level3" number="6.1.1">
+<h3>
+<span class="header-section-number">6.1.1</span> K-means 聚类<a class="anchor" aria-label="anchor" href="#k-means-%E8%81%9A%E7%B1%BB"><i class="fas fa-link"></i></a>
+</h3>
+<p>使用 <code><a href="https://rdrr.io/r/stats/kmeans.html">kmeans()</a></code> 函数聚类，<code>centers = 5</code> 表示聚为 5 个类别，<code>iter.max = 99</code> 表示算法最多循环 99 次，<code>nstart = 25</code> 表示进行 25 次随机初始化，取目标函数值最小的聚类结果。</p>
+<div class="sourceCode" id="cb272"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.kmeans</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/kmeans.html">kmeans</a></span><span class="op">(</span><span class="va">stdmall</span>, centers <span class="op">=</span> <span class="fl">5</span>, iter.max <span class="op">=</span> <span class="fl">99</span>, nstart <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span></code></pre></div>
+<p>聚类后得到一个 <code>kmeans</code> 类，其包含的 slot 如下：</p>
+<ul>
+<li>cluster：各个观测所属的类别；</li>
+<li>centers：各个类别的中心；</li>
+<li>totss：总平方和；</li>
+<li>tot.withinss：组内平方和；</li>
+<li>betweenss：组间平方和；</li>
+<li>size：各个类别的观测数。</li>
+</ul>
+<div class="sourceCode" id="cb273"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.kmeans</span></span></code></pre></div>
+<pre><code>## K-means clustering with 5 clusters of sizes 39, 47, 40, 20, 54
+## 
+## Cluster means:
+##           Age     Income       Score
+## 1  0.07314728  0.9725047 -1.19429976
+## 2  1.20182469 -0.2351832 -0.05223672
+## 3 -0.42773261  0.9724070  1.21304137
+## 4  0.52974416 -1.2872781 -1.23337167
+## 5 -0.97822376 -0.7411999  0.46627028
+## 
+## Clustering vector:
+##  [1] 5 5 4 5 5 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5 4 5
+##  [ reached getOption("max.print") -- omitted 170 entries ]
+## 
+## Within cluster sum of squares by cluster:
+## [1] 46.38992 26.65665 23.91544 18.58760 51.85673
+##  (between_SS / total_SS =  72.0 %)
+## 
+## Available components:
+## 
+## [1] "cluster"      "centers"      "totss"        "withinss"     "tot.withinss"
+## [6] "betweenss"    "size"         "iter"         "ifault"</code></pre>
+<div class="sourceCode" id="cb275"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.kmeans.cluster</span> <span class="op">=</span> <span class="va">mall.kmeans</span><span class="op">$</span><span class="va">cluster</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">mall.kmeans.cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## mall.kmeans.cluster
+##  1  2  3  4  5 
+## 39 47 40 20 54</code></pre>
+<p>将聚类的结果附加到 <code>mall</code> 数据集中去。并按照客户年龄、年收入和消费得分进行可视化（图 <a href="clustering-analysis.html#fig:mall-withcluster-kmeans">6.1</a>）。</p>
+
+<div class="sourceCode" id="cb277"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.withcluster</span> <span class="op">=</span> <span class="va">mall</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>kmeans_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">mall.kmeans.cluster</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mall.withcluster</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Income</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Score</span><span class="op">)</span></span>
+<span><span class="va">p3</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Income</span>, <span class="va">Score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, common.legend <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:mall-withcluster-kmeans"></span>
+<img src="leaning-note_files/figure-html/mall-withcluster-kmeans-1.png" alt="使用 K-means 聚类后的结果" width="672"><p class="caption">
+图 6.1: 使用 K-means 聚类后的结果
+</p>
+</div>
+</div>
+<div id="层次聚类法" class="section level3" number="6.1.2">
+<h3>
+<span class="header-section-number">6.1.2</span> 层次聚类法<a class="anchor" aria-label="anchor" href="#%E5%B1%82%E6%AC%A1%E8%81%9A%E7%B1%BB%E6%B3%95"><i class="fas fa-link"></i></a>
+</h3>
+<p>接下来使用层次聚类法重做上述任务，并可视化比较两者结果的差别。<code><a href="https://rdrr.io/r/stats/dist.html">dist()</a></code> 默认将计算观测值间的欧氏距离，<code>method = "average"</code> 指定使用平均连接法。<code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> 可以直接画出聚类树。</p>
+<div class="sourceCode" id="cb278"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tree</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="va">stdmall</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span></code></pre></div>
+<p>将层级聚类结果切分为 5 个类别。红色的方框叠加显示了各类别的划分。</p>
+<div class="sourceCode" id="cb279"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.hclust.cluster</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html">cutree</a></span><span class="op">(</span><span class="va">tree</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/rect.hclust.html">rect.hclust</a></span><span class="op">(</span><span class="va">tree</span>, k <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-92-1.png" width="672" style="display: block; margin: auto;"></div>
+<p>将层次聚类的结果加入原始数据集，并可视化。将两种聚类方法得到的结果放在一起对比，发现基本一致（图 <a href="clustering-analysis.html#fig:mall-withcluster-hclust">6.2</a>）。</p>
+
+<div class="sourceCode" id="cb280"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.withcluster</span> <span class="op">=</span> <span class="va">mall.withcluster</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>hclust_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">mall.hclust.cluster</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mall.withcluster</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">hclust_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p4</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Income</span><span class="op">)</span></span>
+<span><span class="va">p5</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Score</span><span class="op">)</span></span>
+<span><span class="va">p6</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Income</span>, <span class="va">Score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, <span class="va">p3</span>, common.legend <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="st">"right"</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>                   <span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span><span class="op">(</span> <span class="va">p4</span>, <span class="va">p5</span>, <span class="va">p6</span>, common.legend <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="st">"right"</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>                   ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:mall-withcluster-hclust"></span>
+<img src="leaning-note_files/figure-html/mall-withcluster-hclust-1.png" alt="K-means 和 层次聚类结果的比较。" width="672"><p class="caption">
+图 6.2: K-means 和 层次聚类结果的比较。
+</p>
+</div>
+</div>
+<div id="最佳类别数" class="section level3" number="6.1.3">
+<h3>
+<span class="header-section-number">6.1.3</span> 最佳类别数<a class="anchor" aria-label="anchor" href="#%E6%9C%80%E4%BD%B3%E7%B1%BB%E5%88%AB%E6%95%B0"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>NbClust</strong> 软件包整合了判断最佳类别数的 30 种统计方法，从而能够综合各统计方法的结果得到最佳类别数。</p>
+<div class="sourceCode" id="cb281"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sites.google.com/site/malikacharrad/research/nbclust-package">NbClust</a></span><span class="op">)</span></span>
+<span><span class="va">mall.nbclust.kmeans</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/NbClust/man/NbClust.html">NbClust</a></span><span class="op">(</span><span class="va">stdmall</span>, method <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-93-1.png" width="672" style="display: block; margin: auto;"></div>
+<pre><code>## *** : The Hubert index is a graphical method of determining the number of clusters.
+##                 In the plot of Hubert index, we seek a significant knee that corresponds to a 
+##                 significant increase of the value of the measure i.e the significant peak in Hubert
+##                 index second differences plot. 
+## </code></pre>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-93-2.png" width="672" style="display: block; margin: auto;"></div>
+<pre><code>## *** : The D index is a graphical method of determining the number of clusters. 
+##                 In the plot of D index, we seek a significant knee (the significant peak in Dindex
+##                 second differences plot) that corresponds to a significant increase of the value of
+##                 the measure. 
+##  
+## ******************************************************************* 
+## * Among all indices:                                                
+## * 4 proposed 2 as the best number of clusters 
+## * 3 proposed 3 as the best number of clusters 
+## * 2 proposed 4 as the best number of clusters 
+## * 4 proposed 5 as the best number of clusters 
+## * 4 proposed 6 as the best number of clusters 
+## * 1 proposed 9 as the best number of clusters 
+## * 1 proposed 10 as the best number of clusters 
+## * 2 proposed 12 as the best number of clusters 
+## * 1 proposed 13 as the best number of clusters 
+## * 1 proposed 15 as the best number of clusters 
+## 
+##                    ***** Conclusion *****                            
+##  
+## * According to the majority rule, the best number of clusters is  2 
+##  
+##  
+## *******************************************************************</code></pre>
+<div class="sourceCode" id="cb284"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.nbclust.kmeans</span></span></code></pre></div>
+<pre><code>## $All.index
+##         KL       CH Hartigan     CCC     Scott Marriot     TrCovW   TraceW
+## 2   4.4767 107.0956  63.1628  0.7428  315.5485 5809581 17735.8758 387.4393
+##    Friedman   Rubin Cindex     DB Silhouette   Duda Pseudot2   Beale Ratkowsky
+## 2    2.7054  1.5409 0.3385 1.3557     0.3355 1.1952 -25.6390 -0.2753    0.3427
+##        Ball Ptbiserial    Frey McClain   Dunn Hubert SDindex Dindex   SDbw
+## 2  193.7196     0.4907  0.4209  0.6628 0.0596 0.0029  3.0632 1.2926 1.9128
+##  [ reached getOption("max.print") -- omitted 13 rows ]
+## 
+## $All.CriticalValues
+##    CritValue_Duda CritValue_PseudoT2 Fvalue_Beale
+## 2          0.5679           119.4765       1.0000
+## 3          0.5171           126.0642       1.0000
+## 4          0.4304            95.2960       1.0000
+## 5          0.4622            77.9553       1.0000
+## 6          0.4551            46.7039       0.6456
+## 7          0.2298           214.5346       1.0000
+## 8          0.4050            60.2358       0.8577
+## 9          0.1434           119.4233       1.0000
+## 10         0.1148           146.5100       1.0000
+## 11         0.4304            48.9716       0.2292
+##  [ reached getOption("max.print") -- omitted 4 rows ]
+## 
+## $Best.nc
+##                      KL       CH Hartigan     CCC    Scott Marriot   TrCovW
+## Number_clusters 12.0000   6.0000   4.0000 12.0000   5.0000       5     4.00
+##                  TraceW Friedman   Rubin Cindex      DB Silhouette   Duda
+## Number_clusters  3.0000   5.0000  6.0000 9.0000 10.0000     6.0000 2.0000
+##                 PseudoT2   Beale Ratkowsky    Ball PtBiserial Frey McClain
+## Number_clusters    2.000  2.0000    3.0000  3.0000     5.0000    1  2.0000
+##                   Dunn Hubert SDindex Dindex    SDbw
+## Number_clusters 15.000      0  6.0000      0 13.0000
+##  [ reached getOption("max.print") -- omitted 1 row ]
+## 
+## $Best.partition
+##  [1] 2 2 1 2 2 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2
+##  [ reached getOption("max.print") -- omitted 170 entries ]</code></pre>
+<p><code>Best.partition</code> 记录了综合各个统计指标所得的最佳分类结果。</p>
+<div class="sourceCode" id="cb286"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.withcluster</span> <span class="op">=</span> <span class="va">mall.withcluster</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>best_kmeans_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">mall.nbclust.kmeans</span><span class="op">$</span><span class="va">Best.partition</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>下面使用平均连接层次聚类，并将最佳结果也放到 <code>mall.withcluster</code> 中去。</p>
+<div class="sourceCode" id="cb287"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.nbclust.average</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/NbClust/man/NbClust.html">NbClust</a></span><span class="op">(</span><span class="va">stdmall</span>, method <span class="op">=</span> <span class="st">"average"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-95-1.png" width="672" style="display: block; margin: auto;"></div>
+<pre><code>## *** : The Hubert index is a graphical method of determining the number of clusters.
+##                 In the plot of Hubert index, we seek a significant knee that corresponds to a 
+##                 significant increase of the value of the measure i.e the significant peak in Hubert
+##                 index second differences plot. 
+## </code></pre>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-95-2.png" width="672" style="display: block; margin: auto;"></div>
+<pre><code>## *** : The D index is a graphical method of determining the number of clusters. 
+##                 In the plot of D index, we seek a significant knee (the significant peak in Dindex
+##                 second differences plot) that corresponds to a significant increase of the value of
+##                 the measure. 
+##  
+## ******************************************************************* 
+## * Among all indices:                                                
+## * 4 proposed 2 as the best number of clusters 
+## * 3 proposed 3 as the best number of clusters 
+## * 2 proposed 4 as the best number of clusters 
+## * 3 proposed 5 as the best number of clusters 
+## * 1 proposed 6 as the best number of clusters 
+## * 1 proposed 8 as the best number of clusters 
+## * 2 proposed 9 as the best number of clusters 
+## * 1 proposed 11 as the best number of clusters 
+## * 1 proposed 12 as the best number of clusters 
+## * 3 proposed 13 as the best number of clusters 
+## * 2 proposed 15 as the best number of clusters 
+## 
+##                    ***** Conclusion *****                            
+##  
+## * According to the majority rule, the best number of clusters is  2 
+##  
+##  
+## *******************************************************************</code></pre>
+<div class="sourceCode" id="cb290"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mall.withcluster</span><span class="op">$</span><span class="va">best_average_cluster</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">mall.nbclust.average</span><span class="op">$</span><span class="va">Best.partition</span><span class="op">)</span></span></code></pre></div>
+<p>比较最佳类别数下的结果（图 <a href="clustering-analysis.html#fig:nbclust-result">6.3</a>）。</p>
+
+<div class="sourceCode" id="cb291"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p</span> <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mall.withcluster</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p7</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Income</span>, color <span class="op">=</span> <span class="va">best_kmeans_cluster</span><span class="op">)</span></span>
+<span><span class="va">p8</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Score</span>, color <span class="op">=</span> <span class="va">best_kmeans_cluster</span><span class="op">)</span></span>
+<span><span class="va">p9</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Income</span>, <span class="va">Score</span>, color <span class="op">=</span> <span class="va">best_kmeans_cluster</span><span class="op">)</span></span>
+<span><span class="va">p10</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Income</span>, color <span class="op">=</span> <span class="va">best_average_cluster</span><span class="op">)</span></span>
+<span><span class="va">p11</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span>, <span class="va">Score</span>, color <span class="op">=</span> <span class="va">best_average_cluster</span><span class="op">)</span></span>
+<span><span class="va">p12</span> <span class="op">=</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Income</span>, <span class="va">Score</span>, color <span class="op">=</span> <span class="va">best_average_cluster</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span><span class="op">(</span><span class="va">p7</span>, <span class="va">p8</span>, <span class="va">p9</span>, common.legend <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="st">"right"</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>                   <span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html">ggarrange</a></span><span class="op">(</span> <span class="va">p10</span>, <span class="va">p11</span>, <span class="va">p12</span>, common.legend <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="st">"right"</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>                   ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:nbclust-result"></span>
+<img src="leaning-note_files/figure-html/nbclust-result-1.png" alt="使用 NbClust 计算得到的最佳类别数聚类后的结果。（A）最佳类别数为 2 的 K-means 聚类；（B）最佳类别数为 2 的层次聚类。" width="672"><p class="caption">
+图 6.3: 使用 NbClust 计算得到的最佳类别数聚类后的结果。（A）最佳类别数为 2 的 K-means 聚类；（B）最佳类别数为 2 的层次聚类。
+</p>
+</div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></div>
+<div class="next"><a href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#clustering-analysis"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li>
+<a class="nav-link" href="#%E5%95%86%E5%9C%BA%E5%AE%A2%E6%88%B7%E8%81%9A%E7%B1%BB"><span class="header-section-number">6.1</span> 商场客户聚类</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#k-means-%E8%81%9A%E7%B1%BB"><span class="header-section-number">6.1.1</span> K-means 聚类</a></li>
+<li><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E8%81%9A%E7%B1%BB%E6%B3%95"><span class="header-section-number">6.1.2</span> 层次聚类法</a></li>
+<li><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E7%B1%BB%E5%88%AB%E6%95%B0"><span class="header-section-number">6.1.3</span> 最佳类别数</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

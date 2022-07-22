@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 8 章 神经网络 | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content='8.1 神经网络的基本概念  8.1.1 神经元 神经元是神经网络的基本单元。一个神经元由输入端、组合函数、激活函数、输出端组成。组合函数和激活函数是神经网络的核心。 knitr::include_graphics("https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420092837.png")  图...'>
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 8 章 神经网络 | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content='8.1 神经网络的基本概念  8.1.1 神经元 神经元是神经网络的基本单元。一个神经元由输入端、组合函数、激活函数、输出端组成。组合函数和激活函数是神经网络的核心。 knitr::include_graphics("https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420092837.png")  图...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 8 章 神经网络 | 数据科学学习笔记">
+<meta name="twitter:description" content='8.1 神经网络的基本概念  8.1.1 神经元 神经元是神经网络的基本单元。一个神经元由输入端、组合函数、激活函数、输出端组成。组合函数和激活函数是神经网络的核心。 knitr::include_graphics("https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420092837.png")  图...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="active" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="neural-network" class="section level1" number="8">
+<h1>
+<span class="header-section-number">第 8 章</span> 神经网络<a class="anchor" aria-label="anchor" href="#neural-network"><i class="fas fa-link"></i></a>
+</h1>
+<div id="concept-of-neural-network" class="section level2" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> 神经网络的基本概念<a class="anchor" aria-label="anchor" href="#concept-of-neural-network"><i class="fas fa-link"></i></a>
+</h2>
+<div id="神经元" class="section level3" number="8.1.1">
+<h3>
+<span class="header-section-number">8.1.1</span> 神经元<a class="anchor" aria-label="anchor" href="#%E7%A5%9E%E7%BB%8F%E5%85%83"><i class="fas fa-link"></i></a>
+</h3>
+<p>神经元是神经网络的基本单元。一个神经元由输入端、组合函数、激活函数、输出端组成。组合函数和激活函数是神经网络的核心。</p>
+<div class="sourceCode" id="cb333"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420092837.png"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-123"></span>
+<img src="https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420092837.png" alt="神经元的结构"><p class="caption">
+图 8.1: 神经元的结构
+</p>
+</div>
+<p>人工神经元是一个基于生物神经元的数学模型，神经元接受多个输入信息，对它们进行加权求和，再经过一个激活函数处理，然后将这个结果输出。</p>
+<p>对于神经网络而言，神经元节点本身相当于一个神经细胞，输入相当于树突，带权重的连接相当于轴突，输出相当于突触<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;关于神经网络的更多知识，请参见 &lt;a href="https://www.qikegu.com/docs/3719" class="uri"&gt;https://www.qikegu.com/docs/3719&lt;/a&gt;。&lt;/p&gt;'><sup>5</sup></a>。</p>
+</div>
+<div id="多层感知器" class="section level3" number="8.1.2">
+<h3>
+<span class="header-section-number">8.1.2</span> 多层感知器<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E5%99%A8"><i class="fas fa-link"></i></a>
+</h3>
+<p>多个神经元连接在一起就形成了神经网络。多层感知器是一种常用的神经网络。各个自变量通过输入层的神经元输入到网络，输入层的输出传递给隐藏层，作为后者的输入；数据经过多个隐藏层的传递后，最终被转换后的数据在输出层形成输出值。</p>
+<p>多层感知器通常在隐藏层使用线性组合函数和 S 型激活函数，在输出层使用线性组合函数和与因变量相适应的激活函数。</p>
+<p>多层感知器可以形成很复杂的非线性模型。只要给予足够的数据、隐藏层和训练时间，含一层隐藏层的多层感知器就能够以任意精确度近似自变量和因变量之间几乎任何形式的函数；使用多个隐藏层可能用更少的隐藏神经元和参数就能形成复杂的非线性模型，提高模型的泛化能力<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;是指机器学习算法对新鲜样本的适应能力。 学习的目的是学到隐含在数据背后的规律，对具有同一规律的学习集以外的数据，经过训练的网络也能给出合适的输出，该能力称为泛化能力。&lt;/p&gt;"><sup>6</sup></a>。</p>
+<p>除了多层感知器，常见的神经网络还包括：卷积神经网络、循环神经网络等。卷积神经网络（CNN）旨在解决图像识别问题，卷积神经网络在图像识别、推荐系统以及自然语言处理等方面有着广泛的应用。循环神经网络在语音识别、生成图像描述、音乐合成和机器翻译等领域有着广泛的应用。</p>
+<p>不同类型的神经网络都是由多个神经元连接而成的，其主要区别在于神经元的连接规则不同。</p>
+<p>对于多层感知器而言，其连接规则为：</p>
+<ul>
+<li>神经元按照层来布局。最左边的输入层，负责接收输入数据；最右边的输出层，负责输出数据。</li>
+<li>中间是隐藏层，对于外部不可见。隐藏层可以包含多层，大于一层的就被称为深度神经网络，层次越多数据处理能力越强。</li>
+<li>同一层的神经元之间没有连接。</li>
+<li>前后两层的所有神经元相连，前层神经元的输出就是后层神经元的输入。</li>
+<li>每个连接都有一个权值。</li>
+</ul>
+<div class="sourceCode" id="cb334"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420100007.png"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="https://vnote-1251564393.cos.ap-chengdu.myqcloud.com/typora-img/20220420100007.png" style="display: block; margin: auto;"></div>
+</div>
+<div id="组合函数和激活函数" class="section level3" number="8.1.3">
+<h3>
+<span class="header-section-number">8.1.3</span> 组合函数和激活函数<a class="anchor" aria-label="anchor" href="#%E7%BB%84%E5%90%88%E5%87%BD%E6%95%B0%E5%92%8C%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><i class="fas fa-link"></i></a>
+</h3>
+<p>组合函数通常用线性组合函数，其实就是一个简单的按权重加和。</p>
+<p><span class="math display">\[u_j = \sum(v_1, ..., v_s) = b_j + \sum_{r=1}^sw_{rj}v_r\]</span></p>
+<p>激活函数是非线性函数，对组合函数的结果进行处理。它的可选类型比较多，主要有：</p>
+<ul>
+<li>
+<p>S 型函数</p>
+<ul>
+<li>Logistic 函数：<span class="math inline">\(y = \frac{1}{1+e^{-x}} \in (0, 1)\)</span>
+</li>
+<li>Tanh 函数（双曲正切函数）：<span class="math inline">\(y = 1 - \frac{2}{1+e^{2x}} \in (-1, 1)\)</span>
+</li>
+<li>Eliot 函数（Softsign 函数）：<span class="math inline">\(y = \frac{x}{1+|x|} \in (-1, 1)\)</span>
+</li>
+<li>Arctan 函数：<span class="math inline">\(y = \frac{2}{\pi}arctan(x) \in (-1,1)\)</span>
+</li>
+</ul>
+</li>
+<li><p>ReLU 函数（线性整流函数）：<a href="neural-network.html#eq:relu">(8.1)</a></p></li>
+</ul>
+<p><span class="math display" id="eq:relu">\[\begin{equation}
+f(x) =
+\begin{cases}
+x  &amp; \text{if } x \geq 0 \\
+0  &amp; \text{if } x &lt; 0
+\end{cases}
+\tag{8.1}
+\end{equation}\]</span></p>
+<ul>
+<li>Softmax 函数：<span class="math inline">\(y_j = \frac{e^{u_j}}{\sum_{j'=1}^je^{u_{j'}}} \in (0,1)\)</span>
+</li>
+</ul>
+<p>与 S 型函数和 ReLu 函数不同，Softmax 函数是多变量输入激活函数。Softmax 与正常的 max 函数不同：max 函数仅输出最大值，但 Softmax 确保较小的值具有较小的概率，并且不会直接丢弃。</p>
+<p>这些激活函数都能将组合函数产生的 <span class="math inline">\((-\infty, \infty)\)</span> 通过单调连续的非线性转换变成有限的输出值。每种函数在运算速度、可微性、输出值等方面存在差异，因此具有不同的应用场景。</p>
+</div>
+<div id="神经网络的训练" class="section level3" number="8.1.4">
+<h3>
+<span class="header-section-number">8.1.4</span> 神经网络的训练<a class="anchor" aria-label="anchor" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%AD%E7%BB%83"><i class="fas fa-link"></i></a>
+</h3>
+<p>神经网络的训练，就是求解组合函数权重的过程。简单来说就是从基于误差函数，对权重值不断进行修正，最终是误差逐渐趋近为 0 的过程。误差函数越小，模型拟合效果越好。</p>
+<p>根据因变量的取值类型，要在输出层选用不同的激活函数。</p>
+<ul>
+<li>因变量是二值变量或比例，输出层激活函数采用 Logistic 函数；</li>
+<li>因变量是多种取值的定类变量，输出层激活函数使用 Softmax 函数或 Logistic 函数；</li>
+<li>因变量是多种取值的定序变量，可将其看做定类变量，或者根据多个输出单元的结果进行定序；</li>
+<li>因变量为计数变量（事件发生的次数），输出层的激活函数采用指数函数；</li>
+<li>因变量为取值可正可负的连续变量（如满足正态分布的数值），输出层激活函数采用恒等函数；</li>
+<li>因变量为非负连续变量（如收入、销售额），通常将因变量进行 Box-Cox 转换后，在使用因变量可正可负的方法。</li>
+</ul>
+<p><em>这部分内容解释起来比较复杂，暂且略过</em></p>
+</div>
+</div>
+<div id="使用神经网络预测红酒品质" class="section level2" number="8.2">
+<h2>
+<span class="header-section-number">8.2</span> 使用神经网络预测红酒品质<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E9%A2%84%E6%B5%8B%E7%BA%A2%E9%85%92%E5%93%81%E8%B4%A8"><i class="fas fa-link"></i></a>
+</h2>
+<p><code>ch7_wine.csv</code> 记录了与红酒品质相关的 12 个变量，分别是：</p>
+<ul>
+<li>fixed.acidity：固定酸度</li>
+<li>volatile.acidity：挥发性酸度</li>
+<li>citric.acid：柠檬酸</li>
+<li>residual.sugar：残留的糖分</li>
+<li>chlorides：氯化物</li>
+<li>free.sulfur.dioxide：游离二氧化硫</li>
+<li>total.sulfur.dioxide：总二氧化硫</li>
+<li>density：密度</li>
+<li>pH：酸碱度</li>
+<li>sulphates：硫酸盐</li>
+<li>alcohol：酒精度</li>
+<li>quality：<strong>因变量</strong>，品质等级，取值 3 - 9。</li>
+</ul>
+<div class="sourceCode" id="cb335"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">=</span> <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="st">"ch7_wine.csv"</span><span class="op">)</span></span>
+<span><span class="va">wine</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="va">wine</span></span></code></pre></div>
+<pre><code>## # A tibble: 4,898 × 12
+##    fixed…¹ volat…² citri…³ resid…⁴ chlor…⁵ free.…⁶ total…⁷ density    pH sulph…⁸
+##      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+##  1     7      0.27    0.36    20.7   0.045      45     170   1.00   3       0.45
+##  2     6.3    0.3     0.34     1.6   0.049      14     132   0.994  3.3     0.49
+##  3     8.1    0.28    0.4      6.9   0.05       30      97   0.995  3.26    0.44
+##  4     7.2    0.23    0.32     8.5   0.058      47     186   0.996  3.19    0.4 
+##  5     7.2    0.23    0.32     8.5   0.058      47     186   0.996  3.19    0.4 
+##  6     8.1    0.28    0.4      6.9   0.05       30      97   0.995  3.26    0.44
+##  7     6.2    0.32    0.16     7     0.045      30     136   0.995  3.18    0.47
+##  8     7      0.27    0.36    20.7   0.045      45     170   1.00   3       0.45
+##  9     6.3    0.3     0.34     1.6   0.049      14     132   0.994  3.3     0.49
+## 10     8.1    0.22    0.43     1.5   0.044      28     129   0.994  3.22    0.45
+## # … with 4,888 more rows, 2 more variables: alcohol &lt;dbl&gt;, quality &lt;dbl&gt;, and
+## #   abbreviated variable names ¹​fixed.acidity, ²​volatile.acidity, ³​citric.acid,
+## #   ⁴​residual.sugar, ⁵​chlorides, ⁶​free.sulfur.dioxide, ⁷​total.sulfur.dioxide,
+## #   ⁸​sulphates
+## # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</code></pre>
+<div id="数据标准化和拆分" class="section level3" number="8.2.1">
+<h3>
+<span class="header-section-number">8.2.1</span> 数据标准化和拆分<a class="anchor" aria-label="anchor" href="#%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E5%8C%96%E5%92%8C%E6%8B%86%E5%88%86"><i class="fas fa-link"></i></a>
+</h3>
+<p>将数据集标准化，并采用分层抽样的方法将其分为学习数据集和测试数据集。</p>
+<div class="sourceCode" id="cb337"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">sampling</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wine</span> <span class="op">=</span> <span class="va">wine</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_at</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span><span class="op">(</span><span class="op">-</span><span class="va">quality</span><span class="op">)</span>, <span class="va">scale</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>quality <span class="op">=</span> <span class="va">quality</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">quality</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">train_sample</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/sampling/man/strata.html">strata</a></span><span class="op">(</span><span class="va">wine</span>, stratanames <span class="op">=</span> <span class="st">"quality"</span>,</span>
+<span>                      size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">0.7</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">wine</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                      method <span class="op">=</span> <span class="st">"srswor"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">wine_train</span> <span class="op">=</span> <span class="va">wine</span><span class="op">[</span><span class="va">train_sample</span><span class="op">$</span><span class="va">ID_unit</span>,<span class="op">]</span></span>
+<span><span class="va">wine_test</span> <span class="op">=</span> <span class="va">wine</span><span class="op">[</span><span class="op">-</span><span class="va">train_sample</span><span class="op">$</span><span class="va">ID_unit</span>,<span class="op">]</span></span></code></pre></div>
+<p>生成数据集的自变量矩阵。</p>
+<div class="sourceCode" id="cb338"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x_train</span> <span class="op">=</span> <span class="va">wine_train</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">x_test</span> <span class="op">=</span> <span class="va">wine_test</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>生成数据集的因变量矩阵。因变量矩阵分别指示定类变量和定序变量。</p>
+<div class="sourceCode" id="cb339"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://keras.rstudio.com">keras</a></span><span class="op">)</span></span>
+<span><span class="va">y_train.nom</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/keras/man/to_categorical.html">to_categorical</a></span><span class="op">(</span><span class="va">wine_train</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">y_train.nom</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##         [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [3424,]    0    0    0    0    0    1    0
+## [3425,]    0    0    0    0    0    1    0
+## [3426,]    0    0    0    0    0    0    1
+## [3427,]    0    0    0    0    0    0    1
+##  [ reached getOption("max.print") -- omitted 2 rows ]</code></pre>
+<p>因为因变量是定序变量，所以可以生成一个定序变量矩阵。在这里，如果一个观测的 quality 取值为 0 时，相应行的取值是 <span class="math inline">\((1, 0, 0, 0, 0, 0, 0)\)</span>；如果取值是 6 时，相应行的取值是 <span class="math inline">\((1, 1, 1, 1, 1, 1, 1, 1)\)</span>。</p>
+<div class="sourceCode" id="cb341"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">y_train.ord</span> <span class="op">=</span> <span class="va">y_train.nom</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">y_train.ord</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">j</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">y_train.ord</span><span class="op">[</span><span class="va">i</span>,<span class="op">]</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">y_train.ord</span><span class="op">[</span><span class="va">i</span>,<span class="fl">1</span><span class="op">:</span><span class="va">j</span><span class="op">]</span> <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">y_train.ord</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##         [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [3424,]    1    1    1    1    1    1    0
+## [3425,]    1    1    1    1    1    1    0
+## [3426,]    1    1    1    1    1    1    1
+## [3427,]    1    1    1    1    1    1    1
+##  [ reached getOption("max.print") -- omitted 2 rows ]</code></pre>
+<p>同样生成测试数据集的相应结果。</p>
+<div class="sourceCode" id="cb343"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">y_test.nom</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/keras/man/to_categorical.html">to_categorical</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">y_test.ord</span> <span class="op">=</span> <span class="va">y_test.nom</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">y_test.ord</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">j</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">y_test.ord</span><span class="op">[</span><span class="va">i</span>,<span class="op">]</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">y_train.ord</span><span class="op">[</span><span class="va">i</span>, <span class="fl">1</span><span class="op">:</span><span class="va">j</span><span class="op">]</span> <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="使用-tensorflow-神经网络" class="section level3" number="8.2.2">
+<h3>
+<span class="header-section-number">8.2.2</span> 使用 TensorFlow 神经网络<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8-tensorflow-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><i class="fas fa-link"></i></a>
+</h3>
+<p>构建神经网络需要先配置模型的层，然后再编译模型。</p>
+<p>神经网络的基本组成部分是层。大多数深度学习都包括将简单的层链接在一起。大多数层（如 <code>layer_Dense()</code> 指定的层）都具有在训练期间才会学习的参数。</p>
+<div class="sourceCode" id="cb344"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/keras/man/keras_model_sequential.html">keras_model_sequential</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_flatten.html">layer_flatten</a></span><span class="op">(</span>input_shape <span class="op">=</span> <span class="fl">11</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span><span class="op">(</span>units <span class="op">=</span> <span class="fl">128</span>, activation <span class="op">=</span> <span class="st">"relu"</span><span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># layer_dropout(0.2) %&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span><span class="op">(</span>units <span class="op">=</span> <span class="fl">7</span>, activation <span class="op">=</span> <span class="st">"softmax"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Model: "sequential"
+## ________________________________________________________________________________
+##  Layer (type)                       Output Shape                    Param #     
+## ================================================================================
+##  flatten (Flatten)                  (None, 11)                      0           
+##  dense_1 (Dense)                    (None, 128)                     1536        
+##  dense (Dense)                      (None, 7)                       903         
+## ================================================================================
+## Total params: 2,439
+## Trainable params: 2,439
+## Non-trainable params: 0
+## ________________________________________________________________________________</code></pre>
+<p>该网络的第一层 <code><a href="https://rdrr.io/pkg/keras/man/layer_flatten.html">layer_flatten()</a></code> 将输入数据转换成一维数组（这里是 11 维的向量，如果是 28 * 28 的矩阵，则可以写 <code>input_shape = c(28, 28)</code>）。该层没有要学习的参数，它只会重新格式化数据。</p>
+<p>接下来是两个密集连接层或全连接层。第一个 <code>Dense</code> 层有 128 个节点（或神经元），第二个（也是最后一个）层会返回一个长度为 7 的数组。每个节点都包含一个得分，用来表示当前输入属于 7 个类别中的哪一类。</p>
+<div id="编译模型" class="section level4" number="8.2.2.1">
+<h4>
+<span class="header-section-number">8.2.2.1</span> 编译模型<a class="anchor" aria-label="anchor" href="#%E7%BC%96%E8%AF%91%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<p>在准备对模型进行训练之前，还需要再对其进行一些设置。以下内容是在模型的编译步骤中添加的：</p>
+<ul>
+<li>损失函数：用于测量模型在训练期间的准确率。您会希望最小化此函数，以便将模型”引导”到正确的方向上。</li>
+<li>优化器：决定模型如何根据其看到的数据和自身的损失函数进行更新。</li>
+<li>指标：用于监控训练和测试步骤。以下示例使用了准确率，即被正确分类的比率。</li>
+</ul>
+<div class="sourceCode" id="cb346"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/compile.html">compile</a></span><span class="op">(</span></span>
+<span>    loss <span class="op">=</span> <span class="st">"categorical_crossentropy"</span>,</span>
+<span>    optimizer <span class="op">=</span> <span class="st">"adam"</span>,</span>
+<span>    metrics <span class="op">=</span> <span class="st">"accuracy"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+</div>
+<div id="训练定类模型" class="section level4" number="8.2.2.2">
+<h4>
+<span class="header-section-number">8.2.2.2</span> 训练定类模型<a class="anchor" aria-label="anchor" href="#%E8%AE%AD%E7%BB%83%E5%AE%9A%E7%B1%BB%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb347"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">x_train</span>, y <span class="op">=</span> <span class="va">y_train.nom</span>,</span>
+<span>    epochs <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    validation_split <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>训练神经网络模型需要执行以下步骤：</p>
+<ol style="list-style-type: decimal">
+<li>将训练数据馈送给模型。在本例中，训练数据位于 <code>wine_train</code> 中。</li>
+<li>模型学习将 11 个自变量和 1 个因变量（品质）关联起来。</li>
+<li>要求模型对测试集（在本例中为 <code>wine_test</code> 数组）进行预测。</li>
+<li>验证预测是否与 <code>wine_test</code> 数组中的品质相匹配。</li>
+</ol>
+</div>
+<div id="评估定类准确率" class="section level4" number="8.2.2.3">
+<h4>
+<span class="header-section-number">8.2.2.3</span> 评估定类准确率<a class="anchor" aria-label="anchor" href="#%E8%AF%84%E4%BC%B0%E5%AE%9A%E7%B1%BB%E5%87%86%E7%A1%AE%E7%8E%87"><i class="fas fa-link"></i></a>
+</h4>
+<p>接下来，比较模型在测试数据集上的表现：</p>
+<div class="sourceCode" id="cb348"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/evaluate.html">evaluate</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">x_test</span>,</span>
+<span>    y <span class="op">=</span> <span class="va">y_test.nom</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<pre><code>##      loss  accuracy 
+## 2.2769380 0.5466304</code></pre>
+<div class="sourceCode" id="cb350"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">wine_test</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">predictions</span></span></code></pre></div>
+<pre><code>##                 [,1]         [,2]       [,3]       [,4]         [,5]
+##    [1,] 3.738237e-03 2.715563e-01 0.68221629 0.04217224 1.457058e-04
+##    [2,] 1.107448e-02 8.695627e-02 0.28778127 0.61161149 7.725548e-04
+##    [3,] 3.262162e-03 1.328468e-01 0.16614285 0.69758451 5.504251e-05
+##    [4,] 6.736268e-04 3.616212e-02 0.57422549 0.38891539 2.046533e-05
+##                 [,6]         [,7]
+##    [1,] 3.595377e-05 1.351962e-04
+##    [2,] 1.131449e-03 6.725920e-04
+##    [3,] 6.761569e-05 4.096814e-05
+##    [4,] 1.261270e-06 1.727117e-06
+##  [ reached getOption("max.print") -- omitted 1465 rows ]</code></pre>
+<p>预测结果是自变量在 7 个因变量分类中的概率，使用 <code><a href="https://rdrr.io/r/base/which.min.html">which.max()</a></code> 或者 <code><a href="https://rdrr.io/pkg/keras/man/k_argmax.html">k_argmax()</a></code> 来获得预测的分类。</p>
+<div class="sourceCode" id="cb352"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">class.prediction</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">predictions</span>, <span class="fl">1</span>, <span class="va">which.max</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span>, <span class="va">class.prediction</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##    class.prediction
+##       2   3   4
+##   0   0   3   3
+##   1   4  27  18
+##   2   1 292 144
+##   3   0 152 507
+##   4   0  12 252
+##   5   0   1  52
+##   6   0   0   1</code></pre>
+<div class="sourceCode" id="cb354"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">class_pred</span> <span class="op">=</span> <span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/k_argmax.html">k_argmax</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">class_pred</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></span></code></pre></div>
+<pre><code>## tf.Tensor([2 3 3 2 2 3 2 3 2 3 2 3 3 2 3 2 2 1 1 2], shape=(20), dtype=int64)</code></pre>
+</div>
+<div id="训练定序模型" class="section level4" number="8.2.2.4">
+<h4>
+<span class="header-section-number">8.2.2.4</span> 训练定序模型<a class="anchor" aria-label="anchor" href="#%E8%AE%AD%E7%BB%83%E5%AE%9A%E5%BA%8F%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb356"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">x_train</span>, y <span class="op">=</span> <span class="va">y_train.ord</span>,</span>
+<span>    epochs <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    validation_split <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/evaluate.html">evaluate</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">x_test</span>,</span>
+<span>    y <span class="op">=</span> <span class="va">y_test.ord</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">0</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<pre><code>##       loss   accuracy 
+## 18.9299660  0.3158611</code></pre>
+<p><strong>说明</strong>：模型在测试数据集上的准确率略低于训练数据集。训练准确率和测试准确率之间的差距代表过拟合。<strong>过拟合</strong>是指机器学习模型在新的、以前未曾见过的输入上的表现不如在训练数据上的表现。过拟合的模型会”记住”训练数据集中的噪声和细节，从而对模型在新数据上的表现产生负面影响。</p>
+</div>
+<div id="保存预测模型" class="section level4" number="8.2.2.5">
+<h4>
+<span class="header-section-number">8.2.2.5</span> 保存预测模型<a class="anchor" aria-label="anchor" href="#%E4%BF%9D%E5%AD%98%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<p>使用 <code><a href="https://rdrr.io/pkg/keras/man/save_model_tf.html">save_model_tf()</a></code> 保存神经网络模型，<code><a href="https://rdrr.io/pkg/keras/man/save_model_tf.html">load_model_tf()</a></code> 导入预先创建的神经网络模型。</p>
+<div class="sourceCode" id="cb358"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/keras/man/save_model_tf.html">save_model_tf</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">model</span>, filepath <span class="op">=</span> <span class="st">"model"</span><span class="op">)</span></span>
+<span><span class="va">reloaded_model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/keras/man/save_model_tf.html">load_model_tf</a></span><span class="op">(</span><span class="st">"model"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="使用经典的-rsnns-神经网络模型" class="section level3" number="8.2.3">
+<h3>
+<span class="header-section-number">8.2.3</span> 使用经典的 RSNNS 神经网络模型<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8%E7%BB%8F%E5%85%B8%E7%9A%84-rsnns-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>RSNNS</strong> <span class="citation">(<a href="references.html#ref-R-RSNNS" role="doc-biblioref">Bergmeir 2021</a>)</span>是 R 到 SNNS 神经网络模拟器的接口，含有很多神经网络的常规程序。</p>
+<p>首先，尝试构建一个包含 3 个隐含层的神经网络，每层包含的神经元个数均为 5。</p>
+<p>调整神经网络的参数，可得到四种神经网络模型。</p>
+<ul>
+<li>第一种模型，将因变量看做定类变量，不使用权衰减；</li>
+<li>第二种模型，将因变量看做定序变量，不使用权衰减。</li>
+</ul>
+<div id="定类预测模型" class="section level4" number="8.2.3.1">
+<h4>
+<span class="header-section-number">8.2.3.1</span> 定类预测模型<a class="anchor" aria-label="anchor" href="#%E5%AE%9A%E7%B1%BB%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb359"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/cbergmeir/RSNNS">RSNNS</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">size1</span> <span class="op">=</span> <span class="va">size2</span> <span class="op">=</span> <span class="va">size3</span> <span class="op">=</span> <span class="fl">5</span></span>
+<span></span>
+<span><span class="co"># 第一种模型</span></span>
+<span><span class="va">mlp.nom.nodecay</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/RSNNS/man/mlp.html">mlp</a></span><span class="op">(</span></span>
+<span>  <span class="va">x_train</span>, <span class="va">y_train.nom</span>,</span>
+<span>  size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">size1</span>, <span class="va">size2</span>, <span class="va">size3</span><span class="op">)</span>,</span>
+<span>  inputsTest <span class="op">=</span> <span class="va">x_test</span>,</span>
+<span>  targetsTest <span class="op">=</span> <span class="va">y_test.nom</span>,</span>
+<span>  maxit <span class="op">=</span> <span class="fl">300</span>,  <span class="co"># 迭代次数 300 次</span></span>
+<span>  learnFuncParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span>   <span class="co"># 学习速率指定为 0.1</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mlp.nom.nodecay</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## SNNS network definition file V1.4-3D
+## generated at Fri Jul 22 16:34:22 2022
+## 
+## network name : RSNNS_untitled
+## source files :
+## no. of units : 33
+## no. of connections : 140
+## no. of unit types : 0
+## no. of site types : 0
+## 
+## 
+## learning function : Std_Backpropagation
+## update function   : Topological_Order
+## 
+## 
+## unit default section :
+## 
+## act      | bias     | st | subnet | layer | act func     | out func
+## ---------|----------|----|--------|-------|--------------|-------------
+##  0.00000 |  0.00000 | i  |      0 |     1 | Act_Logistic | Out_Identity 
+## ---------|----------|----|--------|-------|--------------|-------------
+## 
+## 
+## unit definition section :
+## 
+## no. | typeName | unitName                   | act      | bias     | st | position | act func     | out func | sites
+## ----|----------|----------------------------|----------|----------|----|----------|--------------|----------|-------
+##   1 |          | Input_fixed.acidity        |  2.66062 | -0.09042 | i  |  1, 0, 0 | Act_Identity |          | 
+##   2 |          | Input_volatile.acidity     | -0.08176 | -0.04284 | i  |  2, 0, 0 | Act_Identity |          | 
+##   3 |          | Input_citric.acid          |  0.95694 | -0.12396 | i  |  3, 0, 0 | Act_Identity |          | 
+##   4 |          | Input_residual.sugar       |  0.82976 | -0.08442 | i  |  4, 0, 0 | Act_Identity |          | 
+##   5 |          | Input_chlorides            | -0.49306 | -0.11317 | i  |  5, 0, 0 | Act_Identity |          | 
+##   6 |          | Input_free.sulfur.dioxide  | -0.42971 | -0.14879 | i  |  6, 0, 0 | Act_Identity |          | 
+##   7 |          | Input_total.sulfur.dioxide | -0.33791 |  0.01519 | i  |  7, 0, 0 | Act_Identity |          | 
+##   8 |          | Input_density              |  0.99389 | -0.08476 | i  |  8, 0, 0 | Act_Identity |          | 
+##   9 |          | Input_pH                   |  0.07770 | -0.07360 | i  |  9, 0, 0 | Act_Identity |          | 
+##  10 |          | Input_sulphates            | -0.26153 |  0.05686 | i  | 10, 0, 0 | Act_Identity |          | 
+##  11 |          | Input_alcohol              | -0.09285 |  0.06731 | i  | 11, 0, 0 | Act_Identity |          | 
+##  12 |          | Hidden_2_1                 |  0.99696 |  5.02715 | h  |  1, 2, 0 |||
+##  13 |          | Hidden_2_2                 |  0.08200 |  5.90087 | h  |  2, 2, 0 |||
+##  14 |          | Hidden_2_3                 |  0.04845 | -4.57345 | h  |  3, 2, 0 |||
+##  15 |          | Hidden_2_4                 |  0.00225 | -2.70346 | h  |  4, 2, 0 |||
+##  16 |          | Hidden_2_5                 |  0.99960 |  2.87550 | h  |  5, 2, 0 |||
+##  17 |          | Hidden_3_1                 |  0.83918 | -2.32939 | h  |  1, 4, 0 |||
+##  18 |          | Hidden_3_2                 |  0.43934 | -0.70195 | h  |  2, 4, 0 |||
+##  19 |          | Hidden_3_3                 |  0.03598 | -0.96130 | h  |  3, 4, 0 |||
+##  20 |          | Hidden_3_4                 |  0.96628 |  4.12000 | h  |  4, 4, 0 |||
+##  21 |          | Hidden_3_5                 |  0.00110 | -1.21502 | h  |  5, 4, 0 |||
+##  22 |          | Hidden_4_1                 |  0.08368 | -0.61586 | h  |  1, 6, 0 |||
+##  23 |          | Hidden_4_2                 |  0.06837 | -1.25086 | h  |  2, 6, 0 |||
+##  24 |          | Hidden_4_3                 |  0.27048 | -0.34682 | h  |  3, 6, 0 |||
+##  25 |          | Hidden_4_4                 |  0.26613 |  0.05758 | h  |  4, 6, 0 |||
+##  26 |          | Hidden_4_5                 |  0.00094 | -2.64866 | h  |  5, 6, 0 |||
+##  27 |          | Output_1                   |  0.00789 | -3.68038 | o  |  1, 8, 0 |||
+##  28 |          | Output_2                   |  0.04981 | -2.19191 | o  |  2, 8, 0 |||
+##  29 |          | Output_3                   |  0.28387 | -1.77216 | o  |  3, 8, 0 |||
+##  30 |          | Output_4                   |  0.48984 |  0.29632 | o  |  4, 8, 0 |||
+##  31 |          | Output_5                   |  0.08363 | -2.13337 | o  |  5, 8, 0 |||
+##  32 |          | Output_6                   |  0.01890 | -2.97440 | o  |  6, 8, 0 |||
+##  33 |          | Output_7                   |  0.00397 | -4.18404 | o  |  7, 8, 0 |||
+## ----|----------|----------------------------|----------|----------|----|----------|--------------|----------|-------
+## 
+## 
+## connection definition section :
+## 
+## target | site | source:weight
+## -------|------|---------------------------------------------------------------------------------------------------------------------
+##     12 |      | 11: 1.17533, 10:-2.29937,  9:-6.66261,  8: 1.46657,  7: 0.68845,  6:-3.28525,  5:-0.03179,  4:-0.56736,  3: 0.06485,
+##                  2:-1.39152,  1:-0.58841
+##     13 |      | 11: 0.32641, 10: 1.12937,  9: 0.72528,  8:-4.38482,  7: 4.67952,  6: 1.76739,  5:-3.38483,  4: 5.04722,  3:-0.91595,
+##                  2:-1.56693,  1:-2.42682
+##     14 |      | 11: 1.80964, 10: 0.00389,  9: 2.41577,  8:-4.92140,  7:-3.67977,  6: 2.95735,  5: 4.09392,  4: 2.93247,  3: 0.37301,
+##                  2: 2.22932,  1: 2.21998
+##     15 |      | 11:-3.60042, 10:-0.43310,  9: 1.94476,  8:-4.22507,  7:-0.27289,  6: 2.43773,  5: 3.16652,  4: 2.96072,  3: 0.93482,
+##                  2: 2.59101,  1:-0.15585
+##     16 |      | 11: 5.46517, 10:-2.28258,  9:-4.35267,  8:-0.45891,  7:-1.89646,  6: 1.28182,  5: 0.36506,  4: 2.27794,  3: 1.85913,
+##                  2:-4.38059,  1: 0.64088
+##     17 |      | 16: 7.05743, 15:-5.63959, 14: 7.18344, 13: 4.97279, 12:-3.82779
+##     18 |      | 16: 0.86002, 15:-1.74810, 14: 0.41966, 13:-1.20181, 12:-0.32039
+##     19 |      | 16: 0.18784, 15:-0.98449, 14: 1.68488, 13: 3.13555, 12:-2.85971
+##     20 |      | 16:-2.85886, 15: 7.86949, 14:-4.32676, 13:-5.82726, 12: 2.77120
+##     21 |      | 16:-2.68190, 15: 0.20840, 14: 3.89628, 13: 0.10669, 12:-3.12057
+##     22 |      | 21:-2.65286, 20: 0.40298, 19: 1.46786, 18:-1.14719, 17:-2.04097
+##     23 |      | 21:-1.78100, 20: 0.41633, 19: 0.29024, 18:-0.82707, 17:-1.67854
+##     24 |      | 21:-0.55685, 20: 5.94989, 19:-3.27249, 18:-0.03116, 17:-7.46270
+##     25 |      | 21:-3.07400, 20: 0.05806, 19: 0.41109, 18:-1.63107, 17:-0.50387
+##     26 |      | 21: 1.91336, 20:-7.78376, 19: 0.78595, 18:-0.06261, 17: 3.81588
+##     27 |      | 26:-1.79173, 25:-2.32646, 24:-1.14769, 23:-1.67660, 22:-1.28655
+##     28 |      | 26:-2.01496, 25:-4.43360, 24: 2.68938, 23:-1.44994, 22:-2.42583
+##     29 |      | 26:-1.43037, 25: 0.89108, 24: 2.41071, 23:-0.23925, 22:-0.29473
+##     30 |      | 26:-1.77575, 25: 0.95935, 24:-2.74178, 23: 0.61485, 22: 1.30207
+##     31 |      | 26: 2.32794, 25: 0.61271, 24:-0.82757, 23:-1.60088, 22:-1.10738
+##     32 |      | 26: 1.60963, 25:-0.87671, 24:-1.69464, 23:-2.34775, 22:-1.48526
+##     33 |      | 26:-1.71402, 25:-2.18103, 24:-1.84506, 23:-1.80076, 22:-1.63982
+## -------|------|---------------------------------------------------------------------------------------------------------------------</code></pre>
+<p>除了隐含层之外，神经网络还包含 1 个输入层和 1 个输出层。输出层输出 7 维向量，分别指代将预测归为 0 - 6 类的可能性。</p>
+<p>针对测试数据集，得出了一个预测矩阵。使用 <code><a href="https://rdrr.io/r/base/which.min.html">which.max()</a></code> 可以计算得到预测分类。计算预测分类与实际分类相符的比例，可以得到预测准确率 <code>accu</code>。</p>
+<div class="sourceCode" id="cb361"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mlp.nom.nodecay</span><span class="op">$</span><span class="va">fittedTestValues</span></span></code></pre></div>
+<pre><code>##                 [,1]        [,2]       [,3]      [,4]       [,5]        [,6]
+##    [1,] 0.0011958960 0.063806362 0.69769418 0.2011648 0.02870502 0.002036538
+##    [2,] 0.0026136232 0.004968469 0.06197268 0.3214716 0.44166523 0.106326461
+##    [3,] 0.0113041410 0.030774411 0.14375675 0.5848016 0.13624929 0.042650860
+##    [4,] 0.0011565066 0.035125636 0.65277147 0.2708599 0.03234187 0.002309690
+##                 [,7]
+##    [1,] 0.0003261598
+##    [2,] 0.0016948864
+##    [3,] 0.0069644679
+##    [4,] 0.0003383789
+##  [ reached getOption("max.print") -- omitted 1465 rows ]</code></pre>
+<div class="sourceCode" id="cb363"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">class.func.nom</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">prob</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">result.nom</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">mlp.nom.nodecay</span><span class="op">$</span><span class="va">fittedTestValues</span>, <span class="fl">1</span>, <span class="va">class.func.nom</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 预测准确率</span></span>
+<span><span class="va">accu</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">result.nom</span> <span class="op">==</span> <span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span></span>
+<span><span class="va">accu</span></span></code></pre></div>
+<pre><code>## [1] 0.5316542</code></pre>
+<div class="sourceCode" id="cb365"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span>, <span class="va">result.nom</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##    result.nom
+##       2   3   4
+##   0   2   3   1
+##   1  30  18   1
+##   2 257 162  18
+##   3 141 401 117
+##   4  13 128 123
+##   5   0  21  32
+##   6   0   1   0</code></pre>
+</div>
+<div id="定序预测模型" class="section level4" number="8.2.3.2">
+<h4>
+<span class="header-section-number">8.2.3.2</span> 定序预测模型<a class="anchor" aria-label="anchor" href="#%E5%AE%9A%E5%BA%8F%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B"><i class="fas fa-link"></i></a>
+</h4>
+<p>第二种模型，使用了定序自变量作为输出。</p>
+<div class="sourceCode" id="cb367"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 第二种模型</span></span>
+<span><span class="va">mlp.ord.nodecay</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/RSNNS/man/mlp.html">mlp</a></span><span class="op">(</span></span>
+<span>  <span class="va">x_train</span>, <span class="va">y_train.ord</span>,</span>
+<span>  size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">size1</span>, <span class="va">size2</span>, <span class="va">size3</span><span class="op">)</span>,</span>
+<span>  inputsTest <span class="op">=</span> <span class="va">x_test</span>,</span>
+<span>  targetsTest <span class="op">=</span> <span class="va">y_test.ord</span>,</span>
+<span>  maxit <span class="op">=</span> <span class="fl">300</span>,  <span class="co"># 迭代次数 300 次</span></span>
+<span>  learnFuncParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mlp.ord.nodecay</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## SNNS network definition file V1.4-3D
+## generated at Fri Jul 22 16:34:23 2022
+## 
+## network name : RSNNS_untitled
+## source files :
+## no. of units : 33
+## no. of connections : 140
+## no. of unit types : 0
+## no. of site types : 0
+## 
+## 
+## learning function : Std_Backpropagation
+## update function   : Topological_Order
+## 
+## 
+## unit default section :
+## 
+## act      | bias     | st | subnet | layer | act func     | out func
+## ---------|----------|----|--------|-------|--------------|-------------
+##  0.00000 |  0.00000 | i  |      0 |     1 | Act_Logistic | Out_Identity 
+## ---------|----------|----|--------|-------|--------------|-------------
+## 
+## 
+## unit definition section :
+## 
+## no. | typeName | unitName                   | act      | bias     | st | position | act func     | out func | sites
+## ----|----------|----------------------------|----------|----------|----|----------|--------------|----------|-------
+##   1 |          | Input_fixed.acidity        |  2.66062 | -0.04435 | i  |  1, 0, 0 | Act_Identity |          | 
+##   2 |          | Input_volatile.acidity     | -0.08176 | -0.09033 | i  |  2, 0, 0 | Act_Identity |          | 
+##   3 |          | Input_citric.acid          |  0.95694 | -0.07457 | i  |  3, 0, 0 | Act_Identity |          | 
+##   4 |          | Input_residual.sugar       |  0.82976 |  0.22712 | i  |  4, 0, 0 | Act_Identity |          | 
+##   5 |          | Input_chlorides            | -0.49306 |  0.29597 | i  |  5, 0, 0 | Act_Identity |          | 
+##   6 |          | Input_free.sulfur.dioxide  | -0.42971 | -0.26006 | i  |  6, 0, 0 | Act_Identity |          | 
+##   7 |          | Input_total.sulfur.dioxide | -0.33791 |  0.21530 | i  |  7, 0, 0 | Act_Identity |          | 
+##   8 |          | Input_density              |  0.99389 | -0.03818 | i  |  8, 0, 0 | Act_Identity |          | 
+##   9 |          | Input_pH                   |  0.07770 |  0.15574 | i  |  9, 0, 0 | Act_Identity |          | 
+##  10 |          | Input_sulphates            | -0.26153 | -0.05758 | i  | 10, 0, 0 | Act_Identity |          | 
+##  11 |          | Input_alcohol              | -0.09285 | -0.21438 | i  | 11, 0, 0 | Act_Identity |          | 
+##  12 |          | Hidden_2_1                 |  0.34363 | -4.35920 | h  |  1, 2, 0 |||
+##  13 |          | Hidden_2_2                 |  0.08588 | -3.69903 | h  |  2, 2, 0 |||
+##  14 |          | Hidden_2_3                 |  0.12189 | -2.50810 | h  |  3, 2, 0 |||
+##  15 |          | Hidden_2_4                 |  0.08477 | -0.10556 | h  |  4, 2, 0 |||
+##  16 |          | Hidden_2_5                 |  0.00009 | -1.20430 | h  |  5, 2, 0 |||
+##  17 |          | Hidden_3_1                 |  0.93755 |  3.99283 | h  |  1, 4, 0 |||
+##  18 |          | Hidden_3_2                 |  0.27820 | -2.13244 | h  |  2, 4, 0 |||
+##  19 |          | Hidden_3_3                 |  0.47025 | -0.95064 | h  |  3, 4, 0 |||
+##  20 |          | Hidden_3_4                 |  0.91193 |  1.35685 | h  |  4, 4, 0 |||
+##  21 |          | Hidden_3_5                 |  0.12988 | -0.55366 | h  |  5, 4, 0 |||
+##  22 |          | Hidden_4_1                 |  0.29471 |  0.14253 | h  |  1, 6, 0 |||
+##  23 |          | Hidden_4_2                 |  0.13828 | -1.35980 | h  |  2, 6, 0 |||
+##  24 |          | Hidden_4_3                 |  0.41025 | -0.40076 | h  |  3, 6, 0 |||
+##  25 |          | Hidden_4_4                 |  0.04305 | -0.63027 | h  |  4, 6, 0 |||
+##  26 |          | Hidden_4_5                 |  0.25076 | -0.64585 | h  |  5, 6, 0 |||
+##  27 |          | Output_1                   |  0.99627 |  3.55066 | o  |  1, 8, 0 |||
+##  28 |          | Output_2                   |  0.99494 |  3.32781 | o  |  2, 8, 0 |||
+##  29 |          | Output_3                   |  0.99161 |  1.93115 | o  |  3, 8, 0 |||
+##  30 |          | Output_4                   |  0.90427 |  0.76531 | o  |  4, 8, 0 |||
+##  31 |          | Output_5                   |  0.23092 | -1.18909 | o  |  5, 8, 0 |||
+##  32 |          | Output_6                   |  0.03573 | -2.75134 | o  |  6, 8, 0 |||
+##  33 |          | Output_7                   |  0.00395 | -3.59696 | o  |  7, 8, 0 |||
+## ----|----------|----------------------------|----------|----------|----|----------|--------------|----------|-------
+## 
+## 
+## connection definition section :
+## 
+## target | site | source:weight
+## -------|------|---------------------------------------------------------------------------------------------------------------------
+##     12 |      | 11: 0.02085, 10:-0.12125,  9: 0.16916,  8: 2.42068,  7: 0.16272,  6:-2.79721,  5:-0.33754,  4:-2.96055,  3: 0.04716,
+##                  2: 0.72049,  1: 0.90962
+##     13 |      | 11: 1.26876, 10:-1.37035,  9: 1.24834,  8:-1.60201,  7: 0.19984,  6: 4.02323,  5:-1.92827,  4: 3.28013,  3: 0.72335,
+##                  2: 4.24264,  1: 0.13800
+##     14 |      | 11:-2.45536, 10: 1.00573,  9: 2.35195,  8:-4.16185,  7: 1.44174,  6:-2.58316,  5:-0.68068,  4: 1.43230,  3:-1.37219,
+##                  2: 1.32214,  1: 1.42690
+##     15 |      | 11:-2.70611, 10:-0.29327,  9:-3.90370,  8: 1.83350,  7:-0.52748,  6: 2.04732,  5: 2.79783,  4:-0.89289,  3:-3.66339,
+##                  2: 0.34585,  1: 0.84013
+##     16 |      | 11:-0.31444, 10:-0.28840,  9: 0.13738,  8: 5.82739,  7: 1.24058,  6:-3.05437,  5: 0.51921,  4:-3.20950,  3: 0.82515,
+##                  2: 3.69858,  1:-4.70046
+##     17 |      | 16:-2.02493, 15:-0.08087, 14: 3.02753, 13:-2.42140, 12:-4.18441
+##     18 |      | 16: 0.85594, 15: 0.42083, 14: 0.86782, 13: 0.82347, 12: 2.81333
+##     19 |      | 16:-0.25699, 15: 0.19339, 14: 0.83815, 13:-1.18815, 12: 2.37169
+##     20 |      | 16: 2.07943, 15: 4.59461, 14:-2.97684, 13:-3.24768, 12: 3.58692
+##     21 |      | 16:-2.83498, 15: 1.04129, 14:-0.74130, 13:-3.51474, 12:-3.03864
+##     22 |      | 21: 2.04475, 20:-2.97757, 19:-0.58431, 18:-1.02946, 17: 2.12869
+##     23 |      | 21:-2.85933, 20: 4.16152, 19:-0.69126, 18: 0.49724, 17:-3.95366
+##     24 |      | 21:-1.98459, 20: 0.97153, 19:-2.16466, 18:-1.33866, 17: 0.85324
+##     25 |      | 21: 2.13270, 20:-3.81400, 19:-1.00606, 18:-2.22728, 17: 1.94414
+##     26 |      | 21: 0.32557, 20:-1.21032, 19:-0.69347, 18:-1.20205, 17: 1.35806
+##     27 |      | 26: 1.76955, 25: 1.33268, 24: 1.98136, 23: 1.77074, 22: 1.62223
+##     28 |      | 26: 1.74212, 25: 1.42696, 24: 1.85553, 23: 1.47047, 22: 1.66679
+##     29 |      | 26: 2.43411, 25: 2.11947, 24: 3.00497, 23:-1.03736, 22: 3.56425
+##     30 |      | 26: 1.44889, 25: 2.34874, 24: 1.72966, 23:-1.88682, 22: 1.92428
+##     31 |      | 26: 0.62692, 25: 2.57297, 24:-0.56995, 23:-2.68616, 22: 1.09680
+##     32 |      | 26:-0.08466, 25: 0.83976, 24:-1.08070, 23:-3.52710, 22: 1.26279
+##     33 |      | 26:-1.28895, 25:-1.23703, 24:-2.01185, 23:-1.55254, 22:-1.75126
+## -------|------|---------------------------------------------------------------------------------------------------------------------</code></pre>
+<p>定序预测向量需要经过处理，才能得到预测得出的类。计算按序数加权的分类准确率 <code>weighted.accu</code>。注意这个准确率是取所有预测分类平均值之后的结果。例如实际分类是 3，预测分类是 6，则这一预测的加权准确率为 0.5。</p>
+<div class="sourceCode" id="cb369"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mlp.ord.nodecay</span><span class="op">$</span><span class="va">fittedTestValues</span></span></code></pre></div>
+<pre><code>##              [,1]      [,2]      [,3]      [,4]       [,5]        [,6]
+##    [1,] 0.9956080 0.9927572 0.8125862 0.3427341 0.02674903 0.002521048
+##    [2,] 0.9990558 0.9988108 0.9995784 0.9883357 0.62902498 0.107953534
+##    [3,] 0.9958932 0.9934549 0.8989763 0.4917446 0.04070766 0.004083691
+##    [4,] 0.9954665 0.9931853 0.9498710 0.6689847 0.07421679 0.008716500
+##                 [,7]
+##    [1,] 0.0051480541
+##    [2,] 0.0010526127
+##    [3,] 0.0047064577
+##    [4,] 0.0049733184
+##  [ reached getOption("max.print") -- omitted 1465 rows ]</code></pre>
+<div class="sourceCode" id="cb371"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">class.func.ord</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">prob</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="va">prob</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">prob</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">result.ord</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">mlp.ord.nodecay</span><span class="op">$</span><span class="va">fittedTestValues</span>, <span class="fl">1</span>, <span class="va">class.func.ord</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 按序数加权准确率</span></span>
+<span><span class="va">weighted.accu</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">result.ord</span> <span class="op">-</span> <span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">6</span><span class="op">-</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">weighted.accu</span></span></code></pre></div>
+<pre><code>## [1] 0.8990243</code></pre>
+<div class="sourceCode" id="cb373"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">wine_test</span><span class="op">$</span><span class="va">quality</span>, <span class="va">result.ord</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##    result.ord
+##       2   3   4
+##   0   2   3   1
+##   1   7  42   0
+##   2  16 411  10
+##   3   5 575  79
+##   4   0 183  81
+##   5   0  28  25
+##   6   0   1   0</code></pre>
+<p>通过改变隐含层的数量、每层包含的神经元数目以及指定权衰减参数，可以找出最佳的神经网络参数。</p>
+</div>
+</div>
+</div>
+<div id="使用神经网络预测手机用户流失" class="section level2" number="8.3">
+<h2>
+<span class="header-section-number">8.3</span> 使用神经网络预测手机用户流失<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E9%A2%84%E6%B5%8B%E6%89%8B%E6%9C%BA%E7%94%A8%E6%88%B7%E6%B5%81%E5%A4%B1"><i class="fas fa-link"></i></a>
+</h2>
+<div id="读取测试数据" class="section level3" number="8.3.1">
+<h3>
+<span class="header-section-number">8.3.1</span> 读取测试数据<a class="anchor" aria-label="anchor" href="#%E8%AF%BB%E5%8F%96%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb375"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<span><span class="co"># 读取 10 个学习数据集</span></span>
+<span><span class="va">learn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">vector</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"list"</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">file</span> <span class="op">=</span> <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"ch3_mobile_learning_sample"</span>, <span class="va">k</span>, <span class="st">"_imputed.csv"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">learn</span><span class="op">[[</span><span class="va">k</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">file</span>, locale <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/locale.html">locale</a></span><span class="op">(</span>encoding <span class="op">=</span> <span class="st">"GB2312"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">`设备编码`</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># 读取 10 个测试数据集</span></span>
+<span><span class="va">test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"ch3_mobile_test_sample"</span>, <span class="va">k</span>, <span class="st">"_imputed.csv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span>locale <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/locale.html">locale</a></span><span class="op">(</span>encoding <span class="op">=</span> <span class="st">"GB2312"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">`设备编码`</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>生成自变量矩阵。</p>
+<div class="sourceCode" id="cb376"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x_train</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">learn</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">59</span><span class="op">)</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span> </span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">y_train</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">learn</span>, <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="va">y</span><span class="op">[[</span><span class="fl">59</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">x_valid</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">test</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">x</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">59</span><span class="op">)</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">y_valid</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">test</span>, <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="va">y</span><span class="op">[[</span><span class="fl">59</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="初始化神经网络" class="section level3" number="8.3.2">
+<h3>
+<span class="header-section-number">8.3.2</span> 初始化神经网络<a class="anchor" aria-label="anchor" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><i class="fas fa-link"></i></a>
+</h3>
+<p>初始化一个包含 3 个隐含层的神经网络。</p>
+<div class="sourceCode" id="cb377"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://keras.rstudio.com">keras</a></span><span class="op">)</span></span>
+<span><span class="va">model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/keras/man/keras_model_sequential.html">keras_model_sequential</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_flatten.html">layer_flatten</a></span><span class="op">(</span>input_shape <span class="op">=</span> <span class="fl">57</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span><span class="op">(</span>units <span class="op">=</span> <span class="fl">100</span>, activation <span class="op">=</span> <span class="st">"relu"</span><span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># layer_dense(units = 30, activation = "relu") %&gt;%</span></span>
+<span>  <span class="co"># layer_dense(units = 30, activation = "relu") %&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/keras/man/layer_dense.html">layer_dense</a></span><span class="op">(</span>units <span class="op">=</span> <span class="fl">2</span>, activation <span class="op">=</span> <span class="st">"softmax"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://generics.r-lib.org/reference/compile.html">compile</a></span><span class="op">(</span></span>
+<span>  loss <span class="op">=</span> <span class="st">'sparse_categorical_crossentropy'</span>,</span>
+<span>  optimizer <span class="op">=</span> <span class="st">'adam'</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"accuracy"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="训练神经网络" class="section level3" number="8.3.3">
+<h3>
+<span class="header-section-number">8.3.3</span> 训练神经网络<a class="anchor" aria-label="anchor" href="#%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><i class="fas fa-link"></i></a>
+</h3>
+<p>这里，依次使用 10 个插值数据集对神经网络进行训练。训练后的分类准确度可以超过 90%。</p>
+<div class="sourceCode" id="cb378"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x_train</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span></span>
+<span>    <span class="va">x_train</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    <span class="va">y_train</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    epochs <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="测试神经网络" class="section level3" number="8.3.4">
+<h3>
+<span class="header-section-number">8.3.4</span> 测试神经网络<a class="anchor" aria-label="anchor" href="#%E6%B5%8B%E8%AF%95%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><i class="fas fa-link"></i></a>
+</h3>
+<p>测试神经网络在 10 个测试数据集上的表现，发现测试的分类准确度要低一些，仅有 90% 多。</p>
+<div class="sourceCode" id="cb379"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x_valid</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/evaluate.html">evaluate</a></span><span class="op">(</span></span>
+<span>    <span class="va">x_valid</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    <span class="va">y_valid</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="预测结果" class="section level3" number="8.3.5">
+<h3>
+<span class="header-section-number">8.3.5</span> 预测结果<a class="anchor" aria-label="anchor" href="#%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb380"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">prediction</span> <span class="op">=</span> <span class="va">model</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">x_valid</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span>MARGIN <span class="op">=</span> <span class="fl">1</span>, FUN <span class="op">=</span> <span class="va">which.max</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">y_valid</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">prediction</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##    
+##        0    1
+##   0 5219  632
+##   1   24  132</code></pre>
+</div>
+<div id="tensorflow-神经网络的优化" class="section level3" number="8.3.6">
+<h3>
+<span class="header-section-number">8.3.6</span> TensorFlow 神经网络的优化<a class="anchor" aria-label="anchor" href="#tensorflow-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BC%98%E5%8C%96"><i class="fas fa-link"></i></a>
+</h3>
+<p>在上面使用的 <code><a href="https://rdrr.io/pkg/keras/man/keras_model_sequential.html">keras_model_sequential()</a></code> 神经网络中，网络的层数（layer）、节点数（units）、训练时候（epoch）的设置都会影响网络的准确性。目前保留的参数，可以达到预测准确性超 93%。</p>
+</div>
+</div>
+<div id="安装-tensorflow" class="section level2" number="8.4">
+<h2>
+<span class="header-section-number">8.4</span> 安装 TensorFlow<a class="anchor" aria-label="anchor" href="#%E5%AE%89%E8%A3%85-tensorflow"><i class="fas fa-link"></i></a>
+</h2>
+<p><a href="http://www.ra.cs.uni-tuebingen.de/SNNS/welcome.html">SNNS</a> 是一个经典的神经网络模拟器，本书采用了 <strong>RSNNS</strong> 软件包来使用 SNNS 构建神经网络模型。不过，这个模拟器在已经不更新了。作者推荐使用 TensorFlow 或 PyTorch。</p>
+<p>TensorFlow 是一个端到端开源机器学习平台 借助 TensorFlow，初学者和专家可以轻松地创建机器学习模型。</p>
+<p>要安装 TensorFlow，则<strong>必须首先安装 Python/Conda</strong>，参见：<a href="https://docs.anaconda.com/anaconda/install/index.html" class="uri">https://docs.anaconda.com/anaconda/install/index.html</a>。</p>
+<p>使用 <strong>tensorflow</strong> 软件包提供的 <code><a href="https://rdrr.io/pkg/tensorflow/man/install_tensorflow.html">install_tensorflow()</a></code> 函数可以快速安装 TensorFlow。这里将其安装到一个名为 “tensorflow”的 Conda 环境中。</p>
+<div class="sourceCode" id="cb382"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tensorflow"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/tensorflow">tensorflow</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tensorflow/man/install_tensorflow.html">install_tensorflow</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="st">"tensorflow"</span><span class="op">)</span> <span class="co"># 必须首先安装 Python/Conda</span></span></code></pre></div>
+<p>Keras 是一个用 Python 编写的高级神经网络 API，它能够以 TensorFlow, CNTK, 或者 Theano 作为后端运行。Keras 的开发重点是支持快速的实验。能够以最小的时延把你的想法转换为实验结果，是做好研究的关键。</p>
+<div class="sourceCode" id="cb383"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"keras"</span><span class="op">)</span></span></code></pre></div>
+<p>TensorFlow 的高阶 API 基于 Keras API 标准，用于定义和训练神经网络。Keras 通过用户友好的 API 实现快速原型设计、先进技术研究和生产。</p>
+<div id="安装-gpu-支持" class="section level3" number="8.4.1">
+<h3>
+<span class="header-section-number">8.4.1</span> 安装 GPU 支持<a class="anchor" aria-label="anchor" href="#%E5%AE%89%E8%A3%85-gpu-%E6%94%AF%E6%8C%81"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>注意</strong>：如果仅学习的话，GPU 支持并非是必须的。</p>
+<p>要使用 GPU 加速，则<strong>必须在系统中安装以下 NVIDIA® 软件</strong>：</p>
+<ul>
+<li>
+<a href="https://www.nvidia.com/drivers">NVIDIA® GPU 驱动程序</a> - CUDA® 11.2 要求 450.80.02 或更高版本。</li>
+<li>
+<a href="https://developer.nvidia.com/cuda-toolkit-archive">CUDA® 工具包</a>：TensorFlow 支持 CUDA® 11.2（TensorFlow 2.5.0 及更高版本）</li>
+<li>CUDA® 工具包附带的 <a href="http://docs.nvidia.com/cuda/cupti/">CUPTI</a>。</li>
+<li>
+<a href="https://developer.nvidia.com/cudnn">cuDNN SDK 8.1.0</a> <a href="https://developer.nvidia.com/rdp/cudnn-archive">cuDNN 版本</a>。</li>
+<li>（可选）<a href="https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_6">TensorRT 6.0</a>，可缩短用某些模型进行推断的延迟时间并提高吞吐量。</li>
+</ul>
+</div>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></div>
+<div class="next"><a href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#neural-network"><span class="header-section-number">8</span> 神经网络</a></li>
+<li>
+<a class="nav-link" href="#concept-of-neural-network"><span class="header-section-number">8.1</span> 神经网络的基本概念</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E5%85%83"><span class="header-section-number">8.1.1</span> 神经元</a></li>
+<li><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E5%99%A8"><span class="header-section-number">8.1.2</span> 多层感知器</a></li>
+<li><a class="nav-link" href="#%E7%BB%84%E5%90%88%E5%87%BD%E6%95%B0%E5%92%8C%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="header-section-number">8.1.3</span> 组合函数和激活函数</a></li>
+<li><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%AD%E7%BB%83"><span class="header-section-number">8.1.4</span> 神经网络的训练</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E9%A2%84%E6%B5%8B%E7%BA%A2%E9%85%92%E5%93%81%E8%B4%A8"><span class="header-section-number">8.2</span> 使用神经网络预测红酒品质</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E5%8C%96%E5%92%8C%E6%8B%86%E5%88%86"><span class="header-section-number">8.2.1</span> 数据标准化和拆分</a></li>
+<li><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-tensorflow-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="header-section-number">8.2.2</span> 使用 TensorFlow 神经网络</a></li>
+<li><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%8F%E5%85%B8%E7%9A%84-rsnns-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="header-section-number">8.2.3</span> 使用经典的 RSNNS 神经网络模型</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E9%A2%84%E6%B5%8B%E6%89%8B%E6%9C%BA%E7%94%A8%E6%88%B7%E6%B5%81%E5%A4%B1"><span class="header-section-number">8.3</span> 使用神经网络预测手机用户流失</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="header-section-number">8.3.1</span> 读取测试数据</a></li>
+<li><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="header-section-number">8.3.2</span> 初始化神经网络</a></li>
+<li><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="header-section-number">8.3.3</span> 训练神经网络</a></li>
+<li><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="header-section-number">8.3.4</span> 测试神经网络</a></li>
+<li><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C"><span class="header-section-number">8.3.5</span> 预测结果</a></li>
+<li><a class="nav-link" href="#tensorflow-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BC%98%E5%8C%96"><span class="header-section-number">8.3.6</span> TensorFlow 神经网络的优化</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#%E5%AE%89%E8%A3%85-tensorflow"><span class="header-section-number">8.4</span> 安装 TensorFlow</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#%E5%AE%89%E8%A3%85-gpu-%E6%94%AF%E6%8C%81"><span class="header-section-number">8.4.1</span> 安装 GPU 支持</a></li></ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

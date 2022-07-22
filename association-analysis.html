@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 5 章 关联规则挖掘 | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content='关联规则挖掘常用于购物篮分析应用，目的是发现有意义的强关联规则。  5.1 购物篮分析 使用 arules 软件包自带的 Groceries 交易（transaction）数据集进行购物篮分析。 install.packages("arules") install.packages("arulesViz") arules 是用于关联规则挖掘的程序包，我们将调用其中的...'>
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 5 章 关联规则挖掘 | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content='关联规则挖掘常用于购物篮分析应用，目的是发现有意义的强关联规则。  5.1 购物篮分析 使用 arules 软件包自带的 Groceries 交易（transaction）数据集进行购物篮分析。 install.packages("arules") install.packages("arulesViz") arules 是用于关联规则挖掘的程序包，我们将调用其中的...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 5 章 关联规则挖掘 | 数据科学学习笔记">
+<meta name="twitter:description" content='关联规则挖掘常用于购物篮分析应用，目的是发现有意义的强关联规则。  5.1 购物篮分析 使用 arules 软件包自带的 Groceries 交易（transaction）数据集进行购物篮分析。 install.packages("arules") install.packages("arulesViz") arules 是用于关联规则挖掘的程序包，我们将调用其中的...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="active" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="association-analysis" class="section level1" number="5">
+<h1>
+<span class="header-section-number">第 5 章</span> 关联规则挖掘<a class="anchor" aria-label="anchor" href="#association-analysis"><i class="fas fa-link"></i></a>
+</h1>
+<p>关联规则挖掘常用于购物篮分析应用，目的是发现<strong>有意义的强关联规则</strong>。</p>
+<div id="购物篮分析" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> 购物篮分析<a class="anchor" aria-label="anchor" href="#%E8%B4%AD%E7%89%A9%E7%AF%AE%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h2>
+<p>使用 <strong>arules</strong> 软件包自带的 <code>Groceries</code> 交易（transaction）数据集进行购物篮分析。</p>
+<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"arules"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"arulesViz"</span><span class="op">)</span></span></code></pre></div>
+<p><strong>arules</strong> 是用于关联规则挖掘的程序包，我们将调用其中的 <code><a href="https://rdrr.io/pkg/arules/man/itemFrequencyPlot.html">itemFrequencyPlot()</a></code>、<code><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori()</a></code>、<code><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect()</a></code> 等函数。<strong>arulesViz</strong> 是用于关联规则可视化的程序包，我们将调用其中的 <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> 函数。</p>
+<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/arules">arules</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/arulesViz">arulesViz</a></span><span class="op">)</span></span></code></pre></div>
+<div id="交易数据集的类" class="section level3" number="5.1.1">
+<h3>
+<span class="header-section-number">5.1.1</span> 交易数据集的类<a class="anchor" aria-label="anchor" href="#%E4%BA%A4%E6%98%93%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E7%B1%BB"><i class="fas fa-link"></i></a>
+</h3>
+<p><code>Groceries</code> 交易数据集是一个结构化数据，包含了对 169 种商品的 9835 次购买记录。</p>
+<div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Groceries"</span><span class="op">)</span></span>
+<span><span class="va">Groceries</span></span></code></pre></div>
+<pre><code>## transactions in sparse format with
+##  9835 transactions (rows) and
+##  169 items (columns)</code></pre>
+<div class="sourceCode" id="cb220"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">Groceries</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Formal class 'transactions' [package "arules"] with 3 slots
+##   ..@ data       :Formal class 'ngCMatrix' [package "Matrix"] with 5 slots
+##   .. .. ..@ i       : int [1:43367] 13 60 69 78 14 29 98 24 15 29 ...
+##   .. .. ..@ p       : int [1:9836] 0 4 7 8 12 16 21 22 27 28 ...
+##   .. .. ..@ Dim     : int [1:2] 169 9835
+##   .. .. ..@ Dimnames:List of 2
+##   .. .. .. ..$ : NULL
+##   .. .. .. ..$ : NULL
+##   .. .. ..@ factors : list()
+##   ..@ itemInfo   :'data.frame':  169 obs. of  3 variables:
+##   .. ..$ labels: chr [1:169] "frankfurter" "sausage" "liver loaf" "ham" ...
+##   .. ..$ level2: Factor w/ 55 levels "baby food","bags",..: 44 44 44 44 44 44 44 42 42 41 ...
+##   .. ..$ level1: Factor w/ 10 levels "canned food",..: 6 6 6 6 6 6 6 6 6 6 ...
+##   ..@ itemsetInfo:'data.frame':  0 obs. of  0 variables</code></pre>
+<div class="sourceCode" id="cb222"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">Groceries</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## transactions as itemMatrix in sparse format with
+##  9835 rows (elements/itemsets/transactions) and
+##  169 columns (items) and a density of 0.02609146 
+## 
+## most frequent items:
+##       whole milk other vegetables       rolls/buns             soda 
+##             2513             1903             1809             1715 
+##           yogurt          (Other) 
+##             1372            34055 
+## 
+## element (itemset/transaction) length distribution:
+## sizes
+##    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
+## 2159 1643 1299 1005  855  645  545  438  350  246  182  117   78   77   55   46 
+##   17   18   19   20   21   22   23   24   26   27   28   29   32 
+##   29   14   14    9   11    4    6    1    1    1    1    3    1 
+## 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   1.000   2.000   3.000   4.409   6.000  32.000 
+## 
+## includes extended item information - examples:
+##        labels  level2           level1
+## 1 frankfurter sausage meat and sausage
+## 2     sausage sausage meat and sausage
+## 3  liver loaf sausage meat and sausage</code></pre>
+<p>使用 <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code> 和 <code><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect()</a></code> 函数可以查看 <code>transactions</code> 对象中的交易数据。</p>
+<div class="sourceCode" id="cb224"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">Groceries</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     items                     
+## [1] {citrus fruit,            
+##      semi-finished bread,     
+##      margarine,               
+##      ready soups}             
+## [2] {tropical fruit,          
+##      yogurt,                  
+##      coffee}                  
+## [3] {whole milk}              
+## [4] {pip fruit,               
+##      yogurt,                  
+##      cream cheese ,           
+##      meat spreads}            
+## [5] {other vegetables,        
+##      whole milk,              
+##      condensed milk,          
+##      long life bakery product}
+## [6] {whole milk,              
+##      butter,                  
+##      yogurt,                  
+##      rice,                    
+##      abrasive cleaner}</code></pre>
+<p>交易数据中，购买次数最多的商品是 whole milk，有超过 2500 次；其次是 other vegetables 等等（图 <a href="association-analysis.html#fig:top20-saled-item">5.1</a>）。</p>
+
+<div class="sourceCode" id="cb226"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/itemFrequencyPlot.html">itemFrequencyPlot</a></span><span class="op">(</span><span class="va">Groceries</span>, topN <span class="op">=</span> <span class="fl">20</span>, type <span class="op">=</span> <span class="st">"absolute"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:top20-saled-item"></span>
+<img src="leaning-note_files/figure-html/top20-saled-item-1.png" alt="交易数据集中购买次数最多的 20 项" width="672"><p class="caption">
+图 5.1: 交易数据集中购买次数最多的 20 项
+</p>
+</div>
+</div>
+<div id="对交易数据集进行关联分析" class="section level3" number="5.1.2">
+<h3>
+<span class="header-section-number">5.1.2</span> 对交易数据集进行关联分析<a class="anchor" aria-label="anchor" href="#%E5%AF%B9%E4%BA%A4%E6%98%93%E6%95%B0%E6%8D%AE%E9%9B%86%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori()</a></code> 函数使用 Apriori 算法挖掘关联规则<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;Apriori 算法是关联规则挖掘的基本算法。&lt;/p&gt;"><sup>1</sup></a>。函数参数中的 <code>parameter</code> 参数可以指定关联规则的支持度（support），置信度（confidence），每条规则包含的最大项数和最小项数（maxlen/minlen）以及输出结果格式（target）等。</p>
+<div class="sourceCode" id="cb227"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span><span class="va">Groceries</span>,</span>
+<span>                parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>                  support <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>                  confidence <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>                  target <span class="op">=</span> <span class="st">"rules"</span></span>
+<span>                <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Apriori
+## 
+## Parameter specification:
+##  confidence minval smax arem  aval originalSupport maxtime support minlen
+##         0.8    0.1    1 none FALSE            TRUE       5   0.001      1
+##  maxlen target  ext
+##      10  rules TRUE
+## 
+## Algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## Absolute minimum support count: 9 
+## 
+## set item appearances ...[0 item(s)] done [0.00s].
+## set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+## sorting and recoding items ... [157 item(s)] done [0.00s].
+## creating transaction tree ... done [0.00s].
+## checking subsets of size 1 2 3 4 5 6 done [0.01s].
+## writing ... [410 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].</code></pre>
+<p>查看输出规则的基本信息，可知：</p>
+<ul>
+<li><p>所生成的关联规则共有 410 条；</p></li>
+<li><p>关联规则的长度（前项集 lhs 的项数<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;项集是关联规则挖掘中的一个基本概念。&lt;/p&gt;"><sup>2</sup></a> + 后项集 rhs 的项数）大多数为 4 或 5；</p></li>
+<li><p>关联规则的支持度、置信度、提升值和支持观测数的统计值（分位数等）</p></li>
+<li><p>关联规则挖掘的信息。</p></li>
+</ul>
+<div class="sourceCode" id="cb229"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## set of 410 rules
+## 
+## rule length distribution (lhs + rhs):sizes
+##   3   4   5   6 
+##  29 229 140  12 
+## 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.000   4.000   4.000   4.329   5.000   6.000 
+## 
+## summary of quality measures:
+##     support           confidence        coverage             lift       
+##  Min.   :0.001017   Min.   :0.8000   Min.   :0.001017   Min.   : 3.131  
+##  1st Qu.:0.001017   1st Qu.:0.8333   1st Qu.:0.001220   1st Qu.: 3.312  
+##  Median :0.001220   Median :0.8462   Median :0.001322   Median : 3.588  
+##  Mean   :0.001247   Mean   :0.8663   Mean   :0.001449   Mean   : 3.951  
+##  3rd Qu.:0.001322   3rd Qu.:0.9091   3rd Qu.:0.001627   3rd Qu.: 4.341  
+##  Max.   :0.003152   Max.   :1.0000   Max.   :0.003559   Max.   :11.235  
+##      count      
+##  Min.   :10.00  
+##  1st Qu.:10.00  
+##  Median :12.00  
+##  Mean   :12.27  
+##  3rd Qu.:13.00  
+##  Max.   :31.00  
+## 
+## mining info:
+##       data ntransactions support confidence
+##  Groceries          9835   0.001        0.8
+##                                                                                              call
+##  apriori(data = Groceries, parameter = list(support = 0.001, confidence = 0.8, target = "rules"))</code></pre>
+<p>按照提升值（lift）取关联规则的前 3 项，结果显示由项集 <span class="math inline">\(A\)</span>（{liquor, red/blush wine}） 指向项集 <span class="math inline">\(B\)</span>（{bottled beer} ）提升值最高。</p>
+<div class="sourceCode" id="cb231"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules</span>, by <span class="op">=</span> <span class="st">"lift"</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs                        rhs                   support confidence    coverage     lift count
+## [1] {liquor,                                                                                      
+##      red/blush wine}        =&gt; {bottled beer}    0.001931876  0.9047619 0.002135231 11.23527    19
+## [2] {citrus fruit,                                                                                
+##      other vegetables,                                                                            
+##      soda,                                                                                        
+##      fruit/vegetable juice} =&gt; {root vegetables} 0.001016777  0.9090909 0.001118454  8.34040    10
+## [3] {tropical fruit,                                                                              
+##      other vegetables,                                                                            
+##      whole milk,                                                                                  
+##      yogurt,                                                                                      
+##      oil}                   =&gt; {root vegetables} 0.001016777  0.9090909 0.001118454  8.34040    10</code></pre>
+<p>图 <a href="association-analysis.html#fig:association-rule">5.2</a> 对关联规则的可视化结果中可以看出，在全部的 410 个强关联规则中，存在一些支持度（横轴）、置信度（纵轴）和提升值（颜色）均比较理想的规则。</p>
+
+<div class="sourceCode" id="cb233"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:association-rule"></span>
+<img src="leaning-note_files/figure-html/association-rule-1.png" alt="关联规则的可视化" width="672"><p class="caption">
+图 5.2: 关联规则的可视化
+</p>
+</div>
+</div>
+<div id="对关联规则去冗余" class="section level3" number="5.1.3">
+<h3>
+<span class="header-section-number">5.1.3</span> 对关联规则去冗余<a class="anchor" aria-label="anchor" href="#%E5%AF%B9%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%8E%BB%E5%86%97%E4%BD%99"><i class="fas fa-link"></i></a>
+</h3>
+<p>关联规则中可能有一些是冗余的。举例来说：假设有一个规则 {A, B, C, D, E} =&gt; {F}，其置信度为 0.9；另有一条规则 {A, B, C, D} =&gt; {F}，其置信度为 0.95。因为后面这个规则的一般化程度和置信度都更高，所以前一条就是冗余的规则。除了置信度，还可以用提升值来判断一条规则是否冗余。</p>
+<div class="sourceCode" id="cb234"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 去冗余</span></span>
+<span><span class="va">rules_pruned</span> <span class="op">=</span> <span class="va">rules</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/is.redundant.html">is.redundant</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+</div>
+<div id="对关联规则进行排序和控制" class="section level3" number="5.1.4">
+<h3>
+<span class="header-section-number">5.1.4</span> 对关联规则进行排序和控制<a class="anchor" aria-label="anchor" href="#%E5%AF%B9%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F%E5%92%8C%E6%8E%A7%E5%88%B6"><i class="fas fa-link"></i></a>
+</h3>
+<p>根据置信度对输出规则进行排序。</p>
+<div class="sourceCode" id="cb235"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/sort.html">sort</a></span><span class="op">(</span><span class="va">rules</span>, by <span class="op">=</span> <span class="st">"confidence"</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>控制关联规则的长度。</p>
+<div class="sourceCode" id="cb236"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 指定规则长度最大为 3</span></span>
+<span><span class="va">rules_maxlen</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span></span>
+<span>  <span class="va">Groceries</span>,</span>
+<span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    supp <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>    conf <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>    maxlen <span class="op">=</span> <span class="fl">3</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Apriori
+## 
+## Parameter specification:
+##  confidence minval smax arem  aval originalSupport maxtime support minlen
+##         0.8    0.1    1 none FALSE            TRUE       5   0.001      1
+##  maxlen target  ext
+##       3  rules TRUE
+## 
+## Algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## Absolute minimum support count: 9 
+## 
+## set item appearances ...[0 item(s)] done [0.00s].
+## set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+## sorting and recoding items ... [157 item(s)] done [0.00s].
+## creating transaction tree ... done [0.00s].
+## checking subsets of size 1 2 3 done [0.00s].
+## writing ... [29 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].</code></pre>
+<div class="sourceCode" id="cb238"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 查看规则</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_maxlen</span>, by <span class="op">=</span> <span class="st">"lift"</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs                         rhs                support     confidence
+## [1] {liquor, red/blush wine} =&gt; {bottled beer}     0.001931876 0.9047619 
+## [2] {grapes, onions}         =&gt; {other vegetables} 0.001118454 0.9166667 
+##     coverage    lift      count
+## [1] 0.002135231 11.235269 19   
+## [2] 0.001220132  4.737476 11</code></pre>
+</div>
+<div id="指定前项集和后项集" class="section level3" number="5.1.5">
+<h3>
+<span class="header-section-number">5.1.5</span> 指定前项集和后项集<a class="anchor" aria-label="anchor" href="#%E6%8C%87%E5%AE%9A%E5%89%8D%E9%A1%B9%E9%9B%86%E5%92%8C%E5%90%8E%E9%A1%B9%E9%9B%86"><i class="fas fa-link"></i></a>
+</h3>
+<p>指定前项集可以探索顾客在购买了某一商品后，可能会继续购买什么商品。如下面的例子，可以发现用户在购买了 whole milk 后，更有可能去买点蔬菜、酸奶等商品（图 <a href="association-analysis.html#fig:rules-lhs-wholemilk">5.3</a>）。</p>
+
+<div class="sourceCode" id="cb240"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_lhs_wholemilk</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span></span>
+<span>  <span class="va">Groceries</span>,</span>
+<span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    supp <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>    conf <span class="op">=</span> <span class="fl">0.15</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  appearance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    lhs <span class="op">=</span> <span class="st">"whole milk"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_lhs_wholemilk</span>,by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"graph"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rules-lhs-wholemilk"></span>
+<img src="leaning-note_files/figure-html/rules-lhs-wholemilk-1.png" alt="指定前项集的关联规则" width="672"><p class="caption">
+图 5.3: 指定前项集的关联规则
+</p>
+</div>
+<p>指定后项集可以探索顾客在什么情况下会去买一个商品。如下面的例子，可以发现用户在购买了 点 whipped/sour cream、root vegetables 等商品后，更有可能去买 whole milk（图 <a href="association-analysis.html#fig:rules-rhs-wholemilk">5.4</a>）。</p>
+
+<div class="sourceCode" id="cb241"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_rhs_wholemilk</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span></span>
+<span>  <span class="va">Groceries</span>,</span>
+<span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    supp <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>    conf <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  appearance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    rhs <span class="op">=</span> <span class="st">"whole milk"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_rhs_wholemilk</span>,by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"graph"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:rules-rhs-wholemilk"></span>
+<img src="leaning-note_files/figure-html/rules-rhs-wholemilk-1.png" alt="指定后项集的关联规则" width="672"><p class="caption">
+图 5.4: 指定后项集的关联规则
+</p>
+</div>
+</div>
+</div>
+<div id="tatanic-survival" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> 泰坦尼克号存活情况分析<a class="anchor" aria-label="anchor" href="#tatanic-survival"><i class="fas fa-link"></i></a>
+</h2>
+<div id="数据集的定义和预处理" class="section level3" number="5.2.1">
+<h3>
+<span class="header-section-number">5.2.1</span> 数据集的定义和预处理<a class="anchor" aria-label="anchor" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E9%A2%84%E5%A4%84%E7%90%86"><i class="fas fa-link"></i></a>
+</h3>
+<p>本分析所用的数据集记录了 891 位泰坦尼克号乘客的 12 个变量信息，希望能够通过分析挖掘乘客的存活情况与其它变量的关联规则。</p>
+<div class="sourceCode" id="cb242"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<span><span class="va">file</span> <span class="op">=</span> <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="st">"ch4_titanic_train.csv"</span><span class="op">)</span></span>
+<span><span class="va">titanic</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></code></pre></div>
+<p>该数据集包含的字段如下：</p>
+<ul>
+<li>PassengerId：乘客编号</li>
+<li>Survived：是否存活（0 = 没有，1 = 存活）</li>
+<li>Pclass：船舱等级（1 = 一等舱，2 = 二等舱，3 = 三等舱）</li>
+<li>Name：乘客姓名</li>
+<li>Sex：乘客性别</li>
+<li>Age：乘客年龄</li>
+<li>Sibsp：船上的兄妹/配偶数目</li>
+<li>Parch：船上的父母/孩子数目</li>
+<li>Ticket：船票号</li>
+<li>Fare：船票价格</li>
+<li>Cabin：船舱号</li>
+<li>Embarked：登船港口（C = 瑟堡，Q = 皇后镇，S = 南安普顿）</li>
+</ul>
+<div class="sourceCode" id="cb243"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">titanic</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##   PassengerId       Survived          Pclass          Name          
+##  Min.   :  1.0   Min.   :0.0000   Min.   :1.000   Length:891        
+##  1st Qu.:223.5   1st Qu.:0.0000   1st Qu.:2.000   Class :character  
+##      Sex                 Age            SibSp           Parch       
+##  Length:891         Min.   : 0.42   Min.   :0.000   Min.   :0.0000  
+##  Class :character   1st Qu.:20.12   1st Qu.:0.000   1st Qu.:0.0000  
+##     Ticket               Fare           Cabin             Embarked        
+##  Length:891         Min.   :  0.00   Length:891         Length:891        
+##  Class :character   1st Qu.:  7.91   Class :character   Class :character  
+##  [ reached getOption("max.print") -- omitted 5 rows ]</code></pre>
+<p>在进行关联规则分析前，对数据集进行如下预处理：</p>
+<ol style="list-style-type: decimal">
+<li>去掉唯一标识符字段，如乘客编号（PassengerId）、姓名（Name）、传票号（Ticket）；</li>
+<li>去掉缺失过多的字段，如船舱号（Cabin）；</li>
+<li>去掉冗余的字段，如因为船票价格（Fare）与船舱等级相关（Pclass），故删去；</li>
+<li>删掉一些不完整的记录，如年龄（Age）缺失的观测。</li>
+</ol>
+<p>经过这些处理后，还有 712 条观测数据，每个观测有 7 个值。</p>
+<div class="sourceCode" id="cb245"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="va">titanic</span> <span class="op">=</span> <span class="va">titanic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">PassengerId</span>, <span class="va">Name</span>, <span class="va">Ticket</span>, <span class="va">Cabin</span>, <span class="va">Fare</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_if</a></span><span class="op">(</span><span class="va">is.character</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/na_if.html">na_if</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># 将空字符串替换为 NA</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">titanic</span></span></code></pre></div>
+<pre><code>## # A tibble: 712 × 7
+##    Survived Pclass Sex      Age SibSp Parch Embarked
+##       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+##  1        0      3 male      22     1     0 S       
+##  2        1      1 female    38     1     0 C       
+##  3        1      3 female    26     0     0 S       
+##  4        1      1 female    35     1     0 S       
+##  5        0      3 male      35     0     0 S       
+##  6        0      1 male      54     0     0 S       
+##  7        0      3 male       2     3     1 S       
+##  8        1      3 female    27     0     2 S       
+##  9        1      2 female    14     1     0 C       
+## 10        1      3 female     4     1     1 S       
+## # … with 702 more rows
+## # ℹ Use `print(n = ...)` to see more rows</code></pre>
+<p>因为关联分析需要所有的变量均为分类变量（因子），所以需要把年龄（Age）切分为因子。在进行这一操作之前，先看一下年龄的分布情况。</p>
+<div class="sourceCode" id="cb247"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">titanic</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">Age</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">5</span>, fill <span class="op">=</span> <span class="st">"lightblue"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-74-1.png" width="672" style="display: block; margin: auto;"></div>
+<p>接下来将年龄以 20 岁为间隔切分，并将所有变量转变为因子。</p>
+<div class="sourceCode" id="cb248"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">titanic</span> <span class="op">=</span> <span class="va">titanic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span><span class="op">(</span><span class="va">Age</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">100</span>,by<span class="op">=</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span><span class="op">(</span><span class="va">as.factor</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="关联规则分析" class="section level3" number="5.2.2">
+<h3>
+<span class="header-section-number">5.2.2</span> 关联规则分析<a class="anchor" aria-label="anchor" href="#%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%88%86%E6%9E%90"><i class="fas fa-link"></i></a>
+</h3>
+<p>接下来使用 <code><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori()</a></code> 函数对 <code>titanic</code> 数据集进行关联分析。</p>
+<div class="sourceCode" id="cb249"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/arules">arules</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mhahsler/arulesViz">arulesViz</a></span><span class="op">)</span></span>
+<span><span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span><span class="va">titanic</span>, parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>  support <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  confidence <span class="op">=</span> <span class="fl">0.8</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## Apriori
+## 
+## Parameter specification:
+##  confidence minval smax arem  aval originalSupport maxtime support minlen
+##         0.8    0.1    1 none FALSE            TRUE       5     0.1      1
+##  maxlen target  ext
+##      10  rules TRUE
+## 
+## Algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## Absolute minimum support count: 71 
+## 
+## set item appearances ...[0 item(s)] done [0.00s].
+## set transactions ...[27 item(s), 712 transaction(s)] done [0.00s].
+## sorting and recoding items ... [16 item(s)] done [0.00s].
+## creating transaction tree ... done [0.00s].
+## checking subsets of size 1 2 3 4 5 6 7 done [0.00s].
+## writing ... [253 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].</code></pre>
+<div class="sourceCode" id="cb251"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## set of 253 rules
+## 
+## rule length distribution (lhs + rhs):sizes
+##  2  3  4  5  6  7 
+##  8 55 89 67 29  5 
+## 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   2.000   4.000   4.000   4.273   5.000   7.000 
+## 
+## summary of quality measures:
+##     support         confidence        coverage           lift      
+##  Min.   :0.1011   Min.   :0.8030   Min.   :0.1110   Min.   :1.034  
+##  1st Qu.:0.1559   1st Qu.:0.8377   1st Qu.:0.1756   1st Qu.:1.115  
+##  Median :0.2191   Median :0.8549   Median :0.2500   Median :1.275  
+##  Mean   :0.2326   Mean   :0.8706   Mean   :0.2692   Mean   :1.262  
+##  3rd Qu.:0.2851   3rd Qu.:0.9027   3rd Qu.:0.3258   3rd Qu.:1.369  
+##  Max.   :0.5646   Max.   :1.0000   Max.   :0.6587   Max.   :2.383  
+##      count      
+##  Min.   : 72.0  
+##  1st Qu.:111.0  
+##  Median :156.0  
+##  Mean   :165.6  
+##  3rd Qu.:203.0  
+##  Max.   :402.0  
+## 
+## mining info:
+##     data ntransactions support confidence
+##  titanic           712     0.1        0.8
+##                                                                        call
+##  apriori(data = titanic, parameter = list(support = 0.1, confidence = 0.8))</code></pre>
+<div class="sourceCode" id="cb253"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-78-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb254"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules</span> <span class="op">=</span> <span class="va">rules</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/is.redundant.html">is.redundant</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules</span>, by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs               rhs            support confidence  coverage     lift count
+## [1] {Pclass=3,                                                                  
+##      Sex=male,                                                                  
+##      SibSp=0,                                                                   
+##      Parch=0,                                                                   
+##      Embarked=S}   =&gt; {Survived=0} 0.1952247  0.8687500 0.2247191 1.458844   139
+## [2] {Survived=0,                                                                
+##      Pclass=2,                                                                  
+##      Embarked=S}   =&gt; {Sex=male}   0.1067416  0.9268293 0.1151685 1.456738    76
+## [3] {Survived=0,                                                                
+##      Age=(20,40],                                                               
+##      SibSp=0,                                                                   
+##      Parch=0,                                                                   
+##      Embarked=S}   =&gt; {Sex=male}   0.1797753  0.9208633 0.1952247 1.447361   128
+## [4] {Survived=0,                                                                
+##      Age=(20,40],                                                               
+##      SibSp=0,                                                                   
+##      Parch=0}      =&gt; {Sex=male}   0.2106742  0.9202454 0.2289326 1.446390   150
+## [5] {Pclass=3,                                                                  
+##      Sex=male,                                                                  
+##      SibSp=0,                                                                   
+##      Parch=0}      =&gt; {Survived=0} 0.2261236  0.8609626 0.2626404 1.445767   161
+## [6] {Pclass=3,                                                                  
+##      Sex=male,                                                                  
+##      Age=(20,40],                                                               
+##      Parch=0,                                                                   
+##      Embarked=S}   =&gt; {Survived=0} 0.1418539  0.8559322 0.1657303 1.437320   101</code></pre>
+</div>
+<div id="获救的关联特征" class="section level3" number="5.2.3">
+<h3>
+<span class="header-section-number">5.2.3</span> 获救的关联特征<a class="anchor" aria-label="anchor" href="#%E8%8E%B7%E6%95%91%E7%9A%84%E5%85%B3%E8%81%94%E7%89%B9%E5%BE%81"><i class="fas fa-link"></i></a>
+</h3>
+<p>使用指定后项集的关联规则挖掘，可以探究顾客特征取什么值时会存活（Survived = 1）。</p>
+<div class="sourceCode" id="cb256"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_rhs_survive</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span></span>
+<span>  <span class="va">titanic</span>,</span>
+<span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>supp <span class="op">=</span> <span class="fl">0.05</span>, conf <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
+<span>  appearance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rhs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Survived=1"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>分析显示，头等舱、女性、无父母和子女的乘客获救的提升值最高，总体有 98.1% 的几率存活；头等舱、女性、年龄 20 - 40 岁的乘客则有 97.7% 的几率存活。</p>
+<div class="sourceCode" id="cb257"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_rhs_survive</span> <span class="op">=</span> <span class="va">rules_rhs_survive</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/is.redundant.html">is.redundant</a></span><span class="op">(</span><span class="va">rules_rhs_survive</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_rhs_survive</span>, by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs                                    rhs          support    confidence
+## [1] {Pclass=1, Sex=female, Parch=0}     =&gt; {Survived=1} 0.07443820 0.9814815 
+## [2] {Pclass=1, Sex=female, Age=(20,40]} =&gt; {Survived=1} 0.06039326 0.9772727 
+## [3] {Pclass=1, Sex=female, SibSp=0}     =&gt; {Survived=1} 0.06039326 0.9772727 
+##     coverage   lift     count
+## [1] 0.07584270 2.426440 53   
+## [2] 0.06179775 2.416035 43   
+## [3] 0.06179775 2.416035 43   
+##  [ reached 'max' / getOption("max.print") -- omitted 3 rows ]</code></pre>
+</div>
+<div id="死亡的关联特征" class="section level3" number="5.2.4">
+<h3>
+<span class="header-section-number">5.2.4</span> 死亡的关联特征<a class="anchor" aria-label="anchor" href="#%E6%AD%BB%E4%BA%A1%E7%9A%84%E5%85%B3%E8%81%94%E7%89%B9%E5%BE%81"><i class="fas fa-link"></i></a>
+</h3>
+<p>分析乘客死亡的关联特征，可以得出：具有二等舱、男性、年龄在 20 - 40 岁、无兄弟姐妹的乘客死亡几率可达 95%。</p>
+<div class="sourceCode" id="cb259"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_rhs_not_survive</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span></span>
+<span>  <span class="va">titanic</span>,</span>
+<span>  parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>supp <span class="op">=</span> <span class="fl">0.05</span>, conf <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
+<span>  appearance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rhs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Survived=0"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb260"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rules_rhs_not_survive</span> <span class="op">=</span> <span class="va">rules_rhs_not_survive</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/is.redundant.html">is.redundant</a></span><span class="op">(</span><span class="va">rules_rhs_not_survive</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_rhs_not_survive</span>, by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs               rhs             support confidence   coverage     lift count
+## [1] {Pclass=2,                                                                    
+##      Sex=male,                                                                    
+##      Age=(20,40],                                                                 
+##      SibSp=0}      =&gt; {Survived=0} 0.05337079  0.9500000 0.05617978 1.595283    38
+## [2] {Pclass=2,                                                                    
+##      Sex=male,                                                                    
+##      Age=(20,40]}  =&gt; {Survived=0} 0.07865169  0.9491525 0.08286517 1.593860    56
+## [3] {Pclass=2,                                                                    
+##      Sex=male,                                                                    
+##      Parch=0}      =&gt; {Survived=0} 0.10393258  0.9250000 0.11235955 1.553302    74
+## [4] {Sex=male,                                                                    
+##      Age=(0,20],                                                                  
+##      SibSp=0,                                                                     
+##      Parch=0,                                                                     
+##      Embarked=S}   =&gt; {Survived=0} 0.05477528  0.9069767 0.06039326 1.523036    39
+## [5] {Pclass=2,                                                                    
+##      Sex=male,                                                                    
+##      SibSp=0,                                                                     
+##      Embarked=S}   =&gt; {Survived=0} 0.08005618  0.9047619 0.08848315 1.519317    57
+## [6] {Sex=male,                                                                    
+##      Age=(0,20],                                                                  
+##      Parch=0,                                                                     
+##      Embarked=S}   =&gt; {Survived=0} 0.06039326  0.8958333 0.06741573 1.504324    43</code></pre>
+</div>
+</div>
+<div id="学生特征及考试成绩" class="section level2" number="5.3">
+<h2>
+<span class="header-section-number">5.3</span> 学生特征及考试成绩<a class="anchor" aria-label="anchor" href="#%E5%AD%A6%E7%94%9F%E7%89%B9%E5%BE%81%E5%8F%8A%E8%80%83%E8%AF%95%E6%88%90%E7%BB%A9"><i class="fas fa-link"></i></a>
+</h2>
+<p><code>StudentsPerformance.csv</code> 数据集给出了一些学生的特征及考试成绩。数据的定义如下：</p>
+<ul>
+<li>gender：性别</li>
+<li>race/ethnicity:种族</li>
+<li>parental level of education：父母教育水平</li>
+<li>lunch：参与的午餐计划</li>
+<li>test preparation course：测验准备课程完成情况</li>
+<li>math score：数学成绩</li>
+<li>reading score：阅读成绩</li>
+<li>writing score：写作成绩</li>
+</ul>
+<div class="sourceCode" id="cb262"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">file</span> <span class="op">=</span> <span class="fu">xfun</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/xfun/man/magic_path.html">magic_path</a></span><span class="op">(</span><span class="st">"StudentsPerformance.csv"</span><span class="op">)</span></span>
+<span><span class="va">studentPerformance</span> <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="va">studentPerformance</span></span></code></pre></div>
+<pre><code>## # A tibble: 1,000 × 8
+##    gender `race/ethnicity` parental leve…¹ lunch test …² math …³ readi…⁴ writi…⁵
+##    &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 female group B          bachelor's deg… stan… none         72      72      74
+##  2 female group C          some college    stan… comple…      69      90      88
+##  3 female group B          master's degree stan… none         90      95      93
+##  4 male   group A          associate's de… free… none         47      57      44
+##  5 male   group C          some college    stan… none         76      78      75
+##  6 female group B          associate's de… stan… none         71      83      78
+##  7 female group B          some college    stan… comple…      88      95      92
+##  8 male   group B          some college    free… none         40      43      39
+##  9 male   group D          high school     free… comple…      64      64      67
+## 10 female group B          high school     free… none         38      60      50
+## # … with 990 more rows, and abbreviated variable names
+## #   ¹​`parental level of education`, ²​`test preparation course`, ³​`math score`,
+## #   ⁴​`reading score`, ⁵​`writing score`
+## # ℹ Use `print(n = ...)` to see more rows</code></pre>
+<p>将成绩分为不及格（&lt; 60），及格（＜ 85）和优秀（≥ 85）3 个等级，然后做关联规则分析。例如数学成绩及格的一些关联特征如下。</p>
+<div class="sourceCode" id="cb264"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="va">studentPerformance</span> <span class="op">=</span> <span class="va">studentPerformance</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_if</a></span><span class="op">(</span><span class="va">is.numeric</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html">cut</a></span><span class="op">(</span><span class="va">.</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">59</span>, <span class="fl">84</span>, <span class="fl">100</span><span class="op">)</span>, include.lowest <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span><span class="op">(</span><span class="va">as.factor</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 关联分析</span></span>
+<span><span class="va">rules_rhs_math</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/arules/man/apriori.html">apriori</a></span><span class="op">(</span><span class="va">studentPerformance</span>,</span>
+<span>                parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>                  supp <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                  conf <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>                <span class="op">)</span>,</span>
+<span>                appearance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rhs <span class="op">=</span> <span class="st">"math score=(59,84]"</span><span class="op">)</span></span>
+<span>                <span class="op">)</span></span></code></pre></div>
+<pre><code>## Apriori
+## 
+## Parameter specification:
+##  confidence minval smax arem  aval originalSupport maxtime support minlen
+##         0.5    0.1    1 none FALSE            TRUE       5     0.1      1
+##  maxlen target  ext
+##      10  rules TRUE
+## 
+## Algorithmic control:
+##  filter tree heap memopt load sort verbose
+##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+## 
+## Absolute minimum support count: 100 
+## 
+## set item appearances ...[1 item(s)] done [0.00s].
+## set transactions ...[26 item(s), 1000 transaction(s)] done [0.00s].
+## sorting and recoding items ... [24 item(s)] done [0.00s].
+## creating transaction tree ... done [0.00s].
+## checking subsets of size 1 2 3 4 5 6 done [0.00s].
+## writing ... [78 rule(s)] done [0.00s].
+## creating S4 object  ... done [0.00s].</code></pre>
+<div class="sourceCode" id="cb266"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/arules/man/inspect.html">inspect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">rules_rhs_math</span>, by <span class="op">=</span> <span class="st">"lift"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##     lhs                                rhs                  support confidence coverage     lift count
+## [1] {gender=male,                                                                                     
+##      reading score=(59,84],                                                                           
+##      writing score=(59,84]}         =&gt; {math score=(59,84]}   0.207  0.8553719    0.242 1.527450   207
+## [2] {gender=male,                                                                                     
+##      test preparation course=none,                                                                    
+##      reading score=(59,84],                                                                           
+##      writing score=(59,84]}         =&gt; {math score=(59,84]}   0.120  0.8510638    0.141 1.519757   120
+## [3] {gender=male,                                                                                     
+##      lunch=standard,                                                                                  
+##      reading score=(59,84],                                                                           
+##      writing score=(59,84]}         =&gt; {math score=(59,84]}   0.143  0.8461538    0.169 1.510989   143
+## [4] {gender=male,                                                                                     
+##      test preparation course=none,                                                                    
+##      reading score=(59,84]}         =&gt; {math score=(59,84]}   0.141  0.8294118    0.170 1.481092   141
+## [5] {gender=male,                                                                                     
+##      reading score=(59,84]}         =&gt; {math score=(59,84]}   0.233  0.8233216    0.283 1.470217   233
+## [6] {gender=male,                                                                                     
+##      lunch=standard,                                                                                  
+##      test preparation course=none,                                                                    
+##      reading score=(59,84]}         =&gt; {math score=(59,84]}   0.100  0.8196721    0.122 1.463700   100</code></pre>
+</div>
+<div id="关联规则分析的重要概念" class="section level2" number="5.4">
+<h2>
+<span class="header-section-number">5.4</span> 关联规则分析的重要概念<a class="anchor" aria-label="anchor" href="#%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%88%86%E6%9E%90%E7%9A%84%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5"><i class="fas fa-link"></i></a>
+</h2>
+<p>关联分析中的最小支持度、最小置信度等参数的设置对于关联分析的结果由显著影响。它们的定义如下：</p>
+<ul>
+<li>
+<strong>支持度</strong>：相当于联合概率。例如，若有 3% 的顾客同时购买了尿布与啤酒，那么 {尿布} =&gt; {啤酒} 的支持度为 3%。</li>
+<li>
+<strong>置信度</strong>：相当于条件概率。例如，若购买了尿布的顾客有 20% 购买了啤酒，那么 {尿布} =&gt; {啤酒} 的置信度为 20%。</li>
+</ul>
+<p><strong>术语中英文对照</strong></p>
+<ul>
+<li>
+<strong>项集</strong>（itemset）：项的集合。</li>
+<li>
+<strong>频繁项集</strong>（frequent itemset）</li>
+</ul>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></div>
+<div class="next"><a href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#association-analysis"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li>
+<a class="nav-link" href="#%E8%B4%AD%E7%89%A9%E7%AF%AE%E5%88%86%E6%9E%90"><span class="header-section-number">5.1</span> 购物篮分析</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E4%BA%A4%E6%98%93%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E7%B1%BB"><span class="header-section-number">5.1.1</span> 交易数据集的类</a></li>
+<li><a class="nav-link" href="#%E5%AF%B9%E4%BA%A4%E6%98%93%E6%95%B0%E6%8D%AE%E9%9B%86%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90"><span class="header-section-number">5.1.2</span> 对交易数据集进行关联分析</a></li>
+<li><a class="nav-link" href="#%E5%AF%B9%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%8E%BB%E5%86%97%E4%BD%99"><span class="header-section-number">5.1.3</span> 对关联规则去冗余</a></li>
+<li><a class="nav-link" href="#%E5%AF%B9%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F%E5%92%8C%E6%8E%A7%E5%88%B6"><span class="header-section-number">5.1.4</span> 对关联规则进行排序和控制</a></li>
+<li><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E5%89%8D%E9%A1%B9%E9%9B%86%E5%92%8C%E5%90%8E%E9%A1%B9%E9%9B%86"><span class="header-section-number">5.1.5</span> 指定前项集和后项集</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#tatanic-survival"><span class="header-section-number">5.2</span> 泰坦尼克号存活情况分析</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E9%A2%84%E5%A4%84%E7%90%86"><span class="header-section-number">5.2.1</span> 数据集的定义和预处理</a></li>
+<li><a class="nav-link" href="#%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%88%86%E6%9E%90"><span class="header-section-number">5.2.2</span> 关联规则分析</a></li>
+<li><a class="nav-link" href="#%E8%8E%B7%E6%95%91%E7%9A%84%E5%85%B3%E8%81%94%E7%89%B9%E5%BE%81"><span class="header-section-number">5.2.3</span> 获救的关联特征</a></li>
+<li><a class="nav-link" href="#%E6%AD%BB%E4%BA%A1%E7%9A%84%E5%85%B3%E8%81%94%E7%89%B9%E5%BE%81"><span class="header-section-number">5.2.4</span> 死亡的关联特征</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#%E5%AD%A6%E7%94%9F%E7%89%B9%E5%BE%81%E5%8F%8A%E8%80%83%E8%AF%95%E6%88%90%E7%BB%A9"><span class="header-section-number">5.3</span> 学生特征及考试成绩</a></li>
+<li><a class="nav-link" href="#%E5%85%B3%E8%81%94%E8%A7%84%E5%88%99%E5%88%86%E6%9E%90%E7%9A%84%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5"><span class="header-section-number">5.4</span> 关联规则分析的重要概念</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

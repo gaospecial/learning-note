@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 1 章 R Markdown | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content='1.1 设置选项钩子附上图片下载链接 通过设置选项钩子，可以在图片输出设备多于 1 个时候，提供图片的下载链接。 knitr::opts_hooks$set(dev = function(options){  if (length(options$dev) &gt; 1){   x = paste0("[", options$dev, "](",...'>
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 1 章 R Markdown | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content='1.1 设置选项钩子附上图片下载链接 通过设置选项钩子，可以在图片输出设备多于 1 个时候，提供图片的下载链接。 knitr::opts_hooks$set(dev = function(options){  if (length(options$dev) &gt; 1){   x = paste0("[", options$dev, "](",...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 1 章 R Markdown | 数据科学学习笔记">
+<meta name="twitter:description" content='1.1 设置选项钩子附上图片下载链接 通过设置选项钩子，可以在图片输出设备多于 1 个时候，提供图片的下载链接。 knitr::opts_hooks$set(dev = function(options){  if (length(options$dev) &gt; 1){   x = paste0("[", options$dev, "](",...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="active" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="rmarkdown" class="section level1" number="1">
+<h1>
+<span class="header-section-number">第 1 章</span> R Markdown<a class="anchor" aria-label="anchor" href="#rmarkdown"><i class="fas fa-link"></i></a>
+</h1>
+<div id="设置选项钩子附上图片下载链接" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> 设置选项钩子附上图片下载链接<a class="anchor" aria-label="anchor" href="#%E8%AE%BE%E7%BD%AE%E9%80%89%E9%A1%B9%E9%92%A9%E5%AD%90%E9%99%84%E4%B8%8A%E5%9B%BE%E7%89%87%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5"><i class="fas fa-link"></i></a>
+</h2>
+<p>通过设置选项钩子，可以在图片输出设备多于 1 个时候，提供图片的下载链接。</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_hooks.html">opts_hooks</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>dev <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">options</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">options</span><span class="op">$</span><span class="va">dev</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"["</span>, <span class="va">options</span><span class="op">$</span><span class="va">dev</span>, <span class="st">"]("</span>, <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/fig_path.html">fig_path</a></span><span class="op">(</span><span class="va">options</span><span class="op">$</span><span class="va">dev</span><span class="op">)</span>, <span class="st">")"</span>,</span>
+<span>               collapse <span class="op">=</span> <span class="st">" | "</span><span class="op">)</span></span>
+<span>    <span class="va">options</span><span class="op">$</span><span class="va">fig.cap</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">options</span><span class="op">$</span><span class="va">fig.cap</span>, <span class="va">x</span>, sep <span class="op">=</span> <span class="st">" "</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">options</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>下图中，使用了 <code>dev = c('png', 'pdf', "tiff", "svg")</code> 等 4 种图像设备，由于 <code>dev</code> 选项钩子的存在，将自动在图注中添加图片的下载链接。</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<img src="leaning-note_files/figure-html/unnamed-chunk-2-1.png" alt="This is a plot. [png](leaning-note_files/figure-html/unnamed-chunk-2-1.png) | [pdf](leaning-note_files/figure-html/unnamed-chunk-2-1.pdf) | [tiff](leaning-note_files/figure-html/unnamed-chunk-2-1.tiff) | [svg](leaning-note_files/figure-html/unnamed-chunk-2-1.svg)" width="672"><p class="caption">
+图 1.1: This is a plot. <a href="leaning-note_files/figure-html/unnamed-chunk-2-1.png">png</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-2-1.pdf">pdf</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-2-1.tiff">tiff</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-2-1.svg">svg</a>
+</p>
+</div>
+<p>图注也可以使用文本引用，不影响钩子的应用效果。</p>
+
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<img src="leaning-note_files/figure-html/unnamed-chunk-3-1.png" alt="使用选项钩子在图注中添加下载链接。 [png](leaning-note_files/figure-html/unnamed-chunk-3-1.png) | [pdf](leaning-note_files/figure-html/unnamed-chunk-3-1.pdf)" width="672"><p class="caption">
+图 1.2: 使用<strong>选项钩子</strong>在图注中添加下载链接。 <a href="leaning-note_files/figure-html/unnamed-chunk-3-1.png">png</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-3-1.pdf">pdf</a>
+</p>
+</div>
+</div>
+<div id="使用自定义图形设备" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> 使用自定义图形设备<a class="anchor" aria-label="anchor" href="#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9B%BE%E5%BD%A2%E8%AE%BE%E5%A4%87"><i class="fas fa-link"></i></a>
+</h2>
+<blockquote>
+<p>All possible devices supported by knitr are: “bmp”, “postscript”, “pdf”, “png”, “svg”, “jpeg”, “pictex”, “tiff”, “win.metafile”, “cairo_pdf”, “cairo_ps”, “quartz_pdf”, “quartz_png”, “quartz_jpeg”, “quartz_tiff”, “quartz_gif”, “quartz_psd”, “quartz_bmp”, “CairoJPEG”, “CairoPNG”, “CairoPS”, “CairoPDF”, “CairoSVG”, “CairoTIFF”, “Cairo_pdf”, “Cairo_png”, “Cairo_ps”, “Cairo_svg”, “svglite”, “ragg_png”, and “tikz”.</p>
+<p>From: <a href="https://bookdown.org/yihui/rmarkdown-cookbook/graphical-device.html" class="uri">https://bookdown.org/yihui/rmarkdown-cookbook/graphical-device.html</a></p>
+</blockquote>
+<p>是不是可以使用 <code>ppt</code> 设备呢？</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">export</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>dev</code> option can also be the name of a function. If so, the function seems like <code>function(file, width, height)</code>, which has been described at <a href="https://yihui.org/knitr/options/#plots" class="uri">https://yihui.org/knitr/options/#plots</a>.</p>
+<p>Therefore, a new PPTX device can be defined as:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># a pptx device</span></span>
+<span><span class="va">pptx</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">file</span>, <span class="va">width</span>, <span class="va">height</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu">export</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/export/man/graph2office.html">graph2ppt</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span>, width <span class="op">=</span> <span class="va">width</span>, height <span class="op">=</span> <span class="va">height</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Notably, if multiple devices are used, you may need to specify the <code>fig.ext</code> option. For example, <code>dev = c('png', 'pdf', 'pptx'), fig.ext=c("png","pdf","pptx")</code>. See <a href="https://yihui.org/knitr/demo/graphics/#a-note-on-custom-graphical-devices" class="uri">https://yihui.org/knitr/demo/graphics/#a-note-on-custom-graphical-devices</a>.</p>
+
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<img src="leaning-note_files/figure-html/unnamed-chunk-6-1.png" alt="使用选项钩子在图注中添加下载链接。 [png](leaning-note_files/figure-html/unnamed-chunk-6-1.png) | [pdf](leaning-note_files/figure-html/unnamed-chunk-6-1.pdf) | [pptx](leaning-note_files/figure-html/unnamed-chunk-6-1.pptx)" width="672"><p class="caption">
+图 1.3: 使用<strong>选项钩子</strong>在图注中添加下载链接。 <a href="leaning-note_files/figure-html/unnamed-chunk-6-1.png">png</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-6-1.pdf">pdf</a> | <a href="leaning-note_files/figure-html/unnamed-chunk-6-1.pptx">pptx</a>
+</p>
+</div>
+
+</div>
+</div>
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="index.html">前言</a></div>
+<div class="next"><a href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#rmarkdown"><span class="header-section-number">1</span> R Markdown</a></li>
+<li><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%80%89%E9%A1%B9%E9%92%A9%E5%AD%90%E9%99%84%E4%B8%8A%E5%9B%BE%E7%89%87%E4%B8%8B%E8%BD%BD%E9%93%BE%E6%8E%A5"><span class="header-section-number">1.1</span> 设置选项钩子附上图片下载链接</a></li>
+<li><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9B%BE%E5%BD%A2%E8%AE%BE%E5%A4%87"><span class="header-section-number">1.2</span> 使用自定义图形设备</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 11 章 ggtree 代码解析 | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content='ggtree 可以处理进化树及聚类等一系列相关的信息。 library(ape) data("bird.orders") hc = as.hclust(bird.orders) phylo = as.phylo.hclust(hc) dend = as.dendrogram(hc) plot(bird.orders, main = paste0("class = ",...'>
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 11 章 ggtree 代码解析 | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content='ggtree 可以处理进化树及聚类等一系列相关的信息。 library(ape) data("bird.orders") hc = as.hclust(bird.orders) phylo = as.phylo.hclust(hc) dend = as.dendrogram(hc) plot(bird.orders, main = paste0("class = ",...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 11 章 ggtree 代码解析 | 数据科学学习笔记">
+<meta name="twitter:description" content='ggtree 可以处理进化树及聚类等一系列相关的信息。 library(ape) data("bird.orders") hc = as.hclust(bird.orders) phylo = as.phylo.hclust(hc) dend = as.dendrogram(hc) plot(bird.orders, main = paste0("class = ",...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="active" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="ggtree-as-phylo-hclust2" class="section level1" number="11">
+<h1>
+<span class="header-section-number">第 11 章</span> ggtree 代码解析<a class="anchor" aria-label="anchor" href="#ggtree-as-phylo-hclust2"><i class="fas fa-link"></i></a>
+</h1>
+<p><strong>ggtree</strong> 可以处理进化树及聚类等一系列相关的信息。</p>
+<div class="sourceCode" id="cb386"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ape-package.ird.fr/">ape</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"bird.orders"</span><span class="op">)</span></span>
+<span><span class="va">hc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/as.hclust.html">as.hclust</a></span><span class="op">(</span><span class="va">bird.orders</span><span class="op">)</span></span>
+<span><span class="va">phylo</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html">as.phylo.hclust</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span></span>
+<span><span class="va">dend</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/dendrogram.html">as.dendrogram</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb387"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">bird.orders</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">bird.orders</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-155-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb388"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">hc</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-155-2.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb389"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dend</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">dend</span><span class="op">)</span><span class="op">)</span>, horiz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-155-3.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb390"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">phylo</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-155-4.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb391"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/treedata-book/">ggtree</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">bird.orders</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">bird.orders</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-156-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb392"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-156-2.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb393"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">dend</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">dend</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-156-3.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb394"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-156-4.png" width="672" style="display: block; margin: auto;"></div>
+<div id="新函数" class="section level2" number="11.1">
+<h2>
+<span class="header-section-number">11.1</span> 新函数<a class="anchor" aria-label="anchor" href="#%E6%96%B0%E5%87%BD%E6%95%B0"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb395"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">phylo2</span> <span class="op">=</span> <span class="fu">ggtree</span><span class="fu">:::</span><span class="fu">as.phylo.hclust2</span><span class="op">(</span><span class="va">hc</span>, hang <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">phylo</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-157-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb396"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">phylo2</span>,  main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-157-2.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb397"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-158-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb398"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">phylo2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"class = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">phylo2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-158-2.png" width="672" style="display: block; margin: auto;"></div>
+</div>
+<div id="数据结构" class="section level2" number="11.2">
+<h2>
+<span class="header-section-number">11.2</span> 数据结构<a class="anchor" aria-label="anchor" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><i class="fas fa-link"></i></a>
+</h2>
+<p>使用 <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code> 函数可以解析 R 语言中对象的结构。</p>
+<p>R 语言中复杂对象都是一个 List，我们可以看到这两个 List 均包含 4 个数值以及 2 个属性。</p>
+<div class="sourceCode" id="cb399"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## List of 4
+##  $ edge       : int [1:44, 1:2] 24 25 29 29 25 30 39 39 30 24 ...
+##  $ edge.length: num [1:44] 2.1 4.1 21.8 21.8 3 ...
+##  $ tip.label  : chr [1:23] "Struthioniformes" "Tinamiformes" "Craciformes" "Galliformes" ...
+##  $ Nnode      : int 22
+##  - attr(*, "class")= chr "phylo"
+##  - attr(*, "order")= chr "cladewise"</code></pre>
+<div class="sourceCode" id="cb401"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">phylo2</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## List of 4
+##  $ edge       : int [1:44, 1:2] 24 25 29 29 25 30 39 39 30 24 ...
+##  $ edge.length: num [1:44] 4.2 8.2 1 1 6 ...
+##  $ tip.label  : chr [1:23] "Struthioniformes" "Tinamiformes" "Craciformes" "Galliformes" ...
+##  $ Nnode      : int 22
+##  - attr(*, "class")= chr "phylo"
+##  - attr(*, "order")= chr "cladewise"</code></pre>
+<p>不妨比较一下 List 中各个变量的数值是否相同。</p>
+<div class="sourceCode" id="cb403"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">slots</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">slots</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">slot</span> <span class="op">=</span> <span class="va">slots</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="va">comparison</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">[[</span><span class="va">slot</span><span class="op">]</span><span class="op">]</span>, <span class="va">phylo2</span><span class="op">[[</span><span class="va">slot</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">slot</span>, <span class="st">": "</span>, <span class="va">comparison</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<pre><code>## [1] "edge: TRUE"
+## [1] "edge.length: FALSE"
+## [1] "tip.label: TRUE"
+## [1] "Nnode: TRUE"</code></pre>
+<p>由此可见，只有对象中的 <code>edge.length</code> 的数值不同。其它的数值（包括属性）都是一样的。</p>
+<p>这里需要实现了解一下 <code>edge</code> 这个变量的含义。它是一个 22 × 2 的矩阵，数值均为整数。这个整数实际上是树上节点的编号。树状结构的节点有两类，一类是末端节点，另一类是相连的节点。第一类节点即是树的 tip，第二类节点是树的 internal nodes。</p>
+<div class="sourceCode" id="cb405"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">phylo</span></span></code></pre></div>
+<pre><code>## 
+## Phylogenetic tree with 23 tips and 22 internal nodes.
+## 
+## Tip labels:
+##   Struthioniformes, Tinamiformes, Craciformes, Galliformes, Anseriformes, Turniciformes, ...
+## 
+## Rooted; includes branch lengths.</code></pre>
+<p>该树状结构总共有 23 个 tip 和 22 个 internal nodes。</p>
+<p>进化树的本质也是图，把这些节点都视为图上的 node 的话，则每一行即定义了一个图上的边。</p>
+<div class="sourceCode" id="cb407"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://igraph.org">igraph</a></span><span class="op">)</span></span>
+<span><span class="va">g</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_data_frame.html">graph_from_data_frame</a></span><span class="op">(</span><span class="va">phylo</span><span class="op">$</span><span class="va">edge</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">g</span>, layout <span class="op">=</span> <span class="va">layout_as_tree</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-163-1.png" width="672" style="display: block; margin: auto;"></div>
+<p>这个图的拓扑结构与进化树是一样的。</p>
+<p>了解这些信息，是我们进一步理解进化树对象的数据操作的前提。</p>
+</div>
+<div id="源代码解析" class="section level2" number="11.3">
+<h2>
+<span class="header-section-number">11.3</span> 源代码解析<a class="anchor" aria-label="anchor" href="#%E6%BA%90%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90"><i class="fas fa-link"></i></a>
+</h2>
+<p>从上面的结果来看，<code>as.phylo.hclust2()</code> 做的事情就是修改了对象中 <code>edge.length</code> 的值。接下来我们看它是如何修改这个值的。</p>
+<p><code><a href="https://rdrr.io/pkg/ape/man/as.phylo.html">as.phylo.hclust()</a></code> 的源代码如下：</p>
+<div class="sourceCode" id="cb408"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">as.phylo.hclust</span> <span class="op">=</span> <span class="kw">function</span> <span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">N</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">merge</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">edge</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fl">2</span> <span class="op">*</span> <span class="va">N</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span>  <span class="va">edge.length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">N</span><span class="op">)</span></span>
+<span>  <span class="va">node</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span></span>
+<span>  <span class="va">node</span><span class="op">[</span><span class="va">N</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">N</span> <span class="op">+</span> <span class="fl">2L</span></span>
+<span>  <span class="va">cur.nod</span> <span class="op">&lt;-</span> <span class="va">N</span> <span class="op">+</span> <span class="fl">3L</span></span>
+<span>  <span class="va">j</span> <span class="op">&lt;-</span> <span class="fl">1L</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">N</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">edge</span><span class="op">[</span><span class="va">j</span><span class="op">:</span><span class="op">(</span><span class="va">j</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">node</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">l</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">j</span> <span class="op">+</span> <span class="va">l</span> <span class="op">-</span> <span class="fl">1L</span></span>
+<span>      <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">merge</span><span class="op">[</span><span class="va">i</span>, <span class="va">l</span><span class="op">]</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="va">y</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">edge</span><span class="op">[</span><span class="va">k</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">node</span><span class="op">[</span><span class="va">y</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">cur.nod</span></span>
+<span>        <span class="va">cur.nod</span> <span class="op">&lt;-</span> <span class="va">cur.nod</span> <span class="op">+</span> <span class="fl">1L</span></span>
+<span>        <span class="va">edge.length</span><span class="op">[</span><span class="va">k</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">height</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">-</span> <span class="va">x</span><span class="op">$</span><span class="va">height</span><span class="op">[</span><span class="va">y</span><span class="op">]</span></span>
+<span>      <span class="op">}</span></span>
+<span>      <span class="kw">else</span> <span class="op">{</span></span>
+<span>        <span class="va">edge</span><span class="op">[</span><span class="va">k</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="va">y</span></span>
+<span>        <span class="va">edge.length</span><span class="op">[</span><span class="va">k</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">height</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>      <span class="op">}</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">j</span> <span class="op">&lt;-</span> <span class="va">j</span> <span class="op">+</span> <span class="fl">2L</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">labels</span><span class="op">)</span><span class="op">)</span> </span>
+<span>    <span class="va">x</span><span class="op">$</span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">N</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>edge <span class="op">=</span> <span class="va">edge</span>, edge.length <span class="op">=</span> <span class="va">edge.length</span><span class="op">/</span><span class="fl">2</span>, tip.label <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">labels</span>, </span>
+<span>              Nnode <span class="op">=</span> <span class="va">N</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"phylo"</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><code>as.phylo.hclust2()</code> 的源代码如下（这里首先列出了函数中使用的另一个小函数）：</p>
+<div class="sourceCode" id="cb409"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">edge2vec</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tr</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">parent</span> <span class="op">&lt;-</span> <span class="va">tr</span><span class="op">$</span><span class="va">edge</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">child</span> <span class="op">&lt;-</span> <span class="va">tr</span><span class="op">$</span><span class="va">edge</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
+<span>  </span>
+<span>  <span class="co">## use lookup table</span></span>
+<span>  <span class="va">pvec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">tr</span><span class="op">$</span><span class="va">edge</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">pvec</span><span class="op">[</span><span class="va">child</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">parent</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">pvec</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">as.phylo.hclust2</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">hang</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">...</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">h</span> <span class="op">=</span> <span class="va">x</span></span>
+<span>  <span class="va">tr</span> <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html">as.phylo</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="va">ev</span> <span class="op">=</span> <span class="fu">edge2vec</span><span class="op">(</span><span class="va">tr</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">height</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">nodes</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">j</span> <span class="op">&lt;-</span> <span class="va">h</span><span class="op">$</span><span class="va">merge</span><span class="op">[</span><span class="va">i</span>,<span class="op">]</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="va">j</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">j2</span> <span class="op">&lt;-</span> <span class="va">j</span><span class="op">[</span><span class="va">j</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>      <span class="va">nodes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">ev</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">j2</span><span class="op">)</span><span class="op">]</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="va">nodes</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">ev</span><span class="op">[</span><span class="va">nodes</span><span class="op">[</span><span class="va">j</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="va">len</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">tr</span><span class="op">$</span><span class="va">edge</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">len</span><span class="op">[</span><span class="va">nodes</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">h</span><span class="op">$</span><span class="va">height</span></span>
+<span>  <span class="va">pn</span> <span class="op">&lt;-</span> <span class="va">ev</span><span class="op">[</span><span class="va">nodes</span><span class="op">]</span></span>
+<span>  <span class="va">pn</span><span class="op">[</span><span class="va">pn</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">treeio</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tidytree/man/rootnode.html">rootnode</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span></span>
+<span>  <span class="va">len</span><span class="op">[</span><span class="va">nodes</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">len</span><span class="op">[</span><span class="va">pn</span><span class="op">]</span> <span class="op">-</span> <span class="va">len</span><span class="op">[</span><span class="va">nodes</span><span class="op">]</span></span>
+<span>  <span class="va">len</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/summary.phylo.html">Ntip</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">hang</span> <span class="co">#max(h$height)/10</span></span>
+<span>  </span>
+<span>  <span class="va">tr</span><span class="op">$</span><span class="va">edge.length</span> <span class="op">&lt;-</span> <span class="va">len</span><span class="op">[</span><span class="va">tr</span><span class="op">$</span><span class="va">edge</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="其它相关对象的数据结构" class="section level2" number="11.4">
+<h2>
+<span class="header-section-number">11.4</span> 其它相关对象的数据结构<a class="anchor" aria-label="anchor" href="#%E5%85%B6%E5%AE%83%E7%9B%B8%E5%85%B3%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><i class="fas fa-link"></i></a>
+</h2>
+<p><code>phylo</code> 前面已经介绍过，在此不再赘述。</p>
+<div class="sourceCode" id="cb410"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">bird.orders</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## List of 4
+##  $ edge       : int [1:44, 1:2] 24 25 26 26 25 27 28 28 27 24 ...
+##  $ Nnode      : int 22
+##  $ tip.label  : chr [1:23] "Struthioniformes" "Tinamiformes" "Craciformes" "Galliformes" ...
+##  $ edge.length: num [1:44] 2.1 4.1 21.8 21.8 3 1.3 21.6 21.6 22.9 1 ...
+##  - attr(*, "class")= chr "phylo"</code></pre>
+<p><code>hclust</code> 对象是一个含有 6 个变量的 List。</p>
+<div class="sourceCode" id="cb412"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">hc</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## List of 6
+##  $ merge : int [1:22, 1:2] -21 -18 -20 -9 -16 3 -3 -1 5 -11 ...
+##  $ height: num [1:22] 40.2 40.8 41.6 41.6 42.6 43.2 43.2 43.6 43.8 44.2 ...
+##  $ order : int [1:23] 1 2 3 4 5 6 7 8 9 10 ...
+##  $ labels: chr [1:23] "Struthioniformes" "Tinamiformes" "Craciformes" "Galliformes" ...
+##  $ call  : language as.hclust.phylo(x = bird.orders)
+##  $ method: chr "unknown"
+##  - attr(*, "class")= chr "hclust"</code></pre>
+<p><code>dend</code> 对象是一个多层嵌套的 <code>dendrogram</code> 对象（像俄罗斯套娃）。</p>
+<div class="sourceCode" id="cb414"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">dend</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## --[dendrogram w/ 2 branches and 23 members at h = 56]
+##   |--[dendrogram w/ 2 branches and 5 members at h = 51.8]
+##   |  |--[dendrogram w/ 2 branches and 2 members at h = 43.6]
+##   |  |  |--leaf "Struthioniformes" 
+##   |  |  `--leaf "Tinamiformes" 
+##   |  `--[dendrogram w/ 2 branches and 3 members at h = 45.8]
+##   |     |--[dendrogram w/ 2 branches and 2 members at h = 43.2]
+##   |     |  |--leaf "Craciformes" 
+##   |     |  `--leaf "Galliformes" 
+##   |     `--leaf "Anseriformes" 
+##   `--[dendrogram w/ 2 branches and 18 members at h = 54]
+##      |--leaf "Turniciformes" 
+##      `--[dendrogram w/ 2 branches and 17 members at h = 52.6]
+##         |--leaf "Piciformes" 
+##         `--[dendrogram w/ 2 branches and 16 members at h = 50]
+##            |--[dendrogram w/ 2 branches and 5 members at h = 48.8]
+##            |  |--leaf "Galbuliformes" 
+##            |  `--[dendrogram w/ 2 branches and 4 members at h = 46.8]
+##            |     |--[dendrogram w/ 2 branches and 2 members at h = 41.6]
+##            |     |  |--leaf "Bucerotiformes" 
+##            |     |  `--leaf "Upupiformes" 
+##            |     `--[dendrogram w/ 2 branches and 2 members at h = 44.2]
+##            |        |--leaf "Trogoniformes" 
+##            |        `--leaf "Coraciiformes" 
+##            `--[dendrogram w/ 2 branches and 11 members at h = 49]
+##               |--leaf "Coliiformes" 
+##               `--[dendrogram w/ 2 branches and 10 members at h = 47.4]
+##                  |--leaf "Cuculiformes" 
+##                  `--[dendrogram w/ 2 branches and 9 members at h = 46.2]
+##                     |--leaf "Psittaciformes" 
+##                     `--[dendrogram w/ 2 branches and 8 members at h = 45]
+##                        |--[dendrogram w/ 2 branches and 4 members at h = 43.8]
+##                        |  |--[dendrogram w/ 2 branches and 2 members at h = 42.6]
+##                        |  |  |--leaf "Apodiformes" 
+##                        |  |  `--leaf "Trochiliformes" 
+##                        |  `--[dendrogram w/ 2 branches and 2 members at h = 40.8]
+##                        |     |--leaf "Musophagiformes" 
+##                        |     `--leaf "Strigiformes" 
+##                        `--[dendrogram w/ 2 branches and 4 members at h = 43.2]
+##                           |--[dendrogram w/ 2 branches and 3 members at h = 41.6]
+##                           |  |--leaf "Columbiformes" 
+##                           |  `--[dendrogram w/ 2 branches and 2 members at h = 40.2]
+##                           |     |--leaf "Gruiformes" 
+##                           |     `--leaf "Ciconiiformes" 
+##                           `--leaf "Passeriformes"</code></pre>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></div>
+<div class="next"><a href="references.html">参考文献</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#ggtree-as-phylo-hclust2"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="nav-link" href="#%E6%96%B0%E5%87%BD%E6%95%B0"><span class="header-section-number">11.1</span> 新函数</a></li>
+<li><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="header-section-number">11.2</span> 数据结构</a></li>
+<li><a class="nav-link" href="#%E6%BA%90%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="header-section-number">11.3</span> 源代码解析</a></li>
+<li><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E7%9B%B8%E5%85%B3%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="header-section-number">11.4</span> 其它相关对象的数据结构</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

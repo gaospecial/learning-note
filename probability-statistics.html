@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>第 3 章 概率论和数理统计 | 数据科学学习笔记</title>
+<meta name="author" content="高春辉">
+<meta name="description" content='http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm # install.packages("TeachingDemos") library("TeachingDemos")  3.1 掷骰子 dice(10, ndice=2, plot.it=T)  3.1.1 Efron’s dice see:...'>
+<meta name="generator" content="bookdown 0.26 with bs4_book()">
+<meta property="og:title" content="第 3 章 概率论和数理统计 | 数据科学学习笔记">
+<meta property="og:type" content="book">
+<meta property="og:description" content='http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm # install.packages("TeachingDemos") library("TeachingDemos")  3.1 掷骰子 dice(10, ndice=2, plot.it=T)  3.1.1 Efron’s dice see:...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第 3 章 概率论和数理统计 | 数据科学学习笔记">
+<meta name="twitter:description" content='http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm # install.packages("TeachingDemos") library("TeachingDemos")  3.1 掷骰子 dice(10, ndice=2, plot.it=T)  3.1.1 Efron’s dice see:...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<style type="text/css">
+    /* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+        }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">数据科学学习笔记</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">前言</a></li>
+<li><a class="" href="rmarkdown.html"><span class="header-section-number">1</span> R Markdown</a></li>
+<li class="book-part">微生物生态学</li>
+<li><a class="" href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></li>
+<li><a class="active" href="probability-statistics.html"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li class="book-part">数据挖掘实战</li>
+<li><a class="" href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></li>
+<li><a class="" href="association-analysis.html"><span class="header-section-number">5</span> 关联规则挖掘</a></li>
+<li><a class="" href="clustering-analysis.html"><span class="header-section-number">6</span> 聚类分析</a></li>
+<li><a class="" href="linear-model.html"><span class="header-section-number">7</span> 线性模型和广义线性模型</a></li>
+<li><a class="" href="neural-network.html"><span class="header-section-number">8</span> 神经网络</a></li>
+<li><a class="" href="decision-tree.html"><span class="header-section-number">9</span> 决策树</a></li>
+<li class="book-part">Others</li>
+<li><a class="" href="officer.html"><span class="header-section-number">10</span> 处理 Office 文件</a></li>
+<li><a class="" href="ggtree-as-phylo-hclust2.html"><span class="header-section-number">11</span> ggtree 代码解析</a></li>
+<li><a class="" href="references.html">参考文献</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="probability-statistics" class="section level1" number="3">
+<h1>
+<span class="header-section-number">第 3 章</span> 概率论和数理统计<a class="anchor" aria-label="anchor" href="#probability-statistics"><i class="fas fa-link"></i></a>
+</h1>
+<p><a href="http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm" class="uri">http://staff.ustc.edu.cn/~zwp/teach/Prob-Stat/probstat.htm</a></p>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("TeachingDemos")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"TeachingDemos"</span><span class="op">)</span></span></code></pre></div>
+<div id="roll-the-dice" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> 掷骰子<a class="anchor" aria-label="anchor" href="#roll-the-dice"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/TeachingDemos/man/dice.html">dice</a></span><span class="op">(</span><span class="fl">10</span>, ndice<span class="op">=</span><span class="fl">2</span>, plot.it<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;"></div>
+<div id="efrons-dice" class="section level3" number="3.1.1">
+<h3>
+<span class="header-section-number">3.1.1</span> Efron’s dice<a class="anchor" aria-label="anchor" href="#efrons-dice"><i class="fas fa-link"></i></a>
+</h3>
+<p>see: <a href="http://mathworld.wolfram.com/EfronsDice.html" class="uri">http://mathworld.wolfram.com/EfronsDice.html</a>。</p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="va">ed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">2</span><span class="op">)</span> <span class="op">)</span>,</span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span> <span class="op">)</span>,</span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span> <span class="op">)</span> <span class="op">)</span></span>
+<span>     </span>
+<span> <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TeachingDemos/man/dice.html">dice</a></span><span class="op">(</span> <span class="fl">10000</span>, ndice<span class="op">=</span><span class="fl">4</span> <span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/pkg/TeachingDemos/man/dice.html">dice</a></span><span class="op">(</span><span class="fl">10</span>,ndice<span class="op">=</span><span class="fl">4</span>,plot.it<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="va">ed.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="va">ed</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[</span> <span class="va">tmp</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">]</span> <span class="op">)</span></span>
+<span>     </span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ed.out</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">ed.out</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6666</code></pre>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ed.out</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">ed.out</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6663</code></pre>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ed.out</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">ed.out</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6663</code></pre>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ed.out</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">ed.out</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6603</code></pre>
+</div>
+</div>
+<div id="buffons-needle" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> Buffon’s needle<a class="anchor" aria-label="anchor" href="#buffons-needle"><i class="fas fa-link"></i></a>
+</h2>
+<p>See: <a href="https://yihui.org/animation/example/buffon-needle/" class="uri">https://yihui.org/animation/example/buffon-needle/</a></p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("animation")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/animation/">animation</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">oopt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/animation/man/ani.options.html">ani.options</a></span><span class="op">(</span>nmax <span class="op">=</span> <span class="fl">5</span>, interval <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">opar</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">20</span>, mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">0.5</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/animation/man/buffon.needle.html">buffon.needle</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="leaning-note_files/figure-html/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;"><img src="leaning-note_files/figure-html/unnamed-chunk-32-2.png" width="672" style="display: block; margin: auto;"><img src="leaning-note_files/figure-html/unnamed-chunk-32-3.png" width="672" style="display: block; margin: auto;"><img src="leaning-note_files/figure-html/unnamed-chunk-32-4.png" width="672" style="display: block; margin: auto;"><img src="leaning-note_files/figure-html/unnamed-chunk-32-5.png" width="672" style="display: block; margin: auto;"></p>
+</div>
+<div id="sample---sampling-from-a-finite-set" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> sample() - sampling from a finite set<a class="anchor" aria-label="anchor" href="#sample---sampling-from-a-finite-set"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># sample(x, size, replace = FALSE, prob = NULL)</span></span>
+<span></span>
+<span><span class="co"># Lotto genrator (sampling from 1:39 without replacement)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">39</span>, <span class="fl">7</span><span class="op">)</span> <span class="co"># or: sample(1:39, 7)</span></span></code></pre></div>
+<pre><code>## [1] 33 39 13 37 27 12 20</code></pre>
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Ten rows of LOTTO (surely one of these must win?!?)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">replicate</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">39</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]   36   17   18   15   31   38   34   34   29    26
+## [2,]   14   23   35   12    2    9   32   35   23    28
+## [3,]   13   11    2   22   18    1   25   39   34    24
+##  [ reached getOption("max.print") -- omitted 4 rows ]</code></pre>
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use the argument prob, if you need to specify different</span></span>
+<span><span class="co"># probabilities for the different outcomes.</span></span>
+<span></span>
+<span><span class="co"># Sometimes we want sampling with replacement; this is the</span></span>
+<span><span class="co"># same as drawing an i.i.d. sequence of values from the</span></span>
+<span><span class="co"># corresponding discrete distribution.</span></span>
+<span></span>
+<span><span class="co"># Simulate dice throws</span></span>
+<span></span>
+<span><span class="va">fair.die</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">fair.die</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## fair.die
+##  1  2  3  4  5  6 
+## 22 18 12 17 16 15</code></pre>
+<p>Simulate dice throws with a loaded die.</p>
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">loaded.die</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">loaded.die</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## loaded.die
+##  1  2  3  4  5  6 
+## 18 13 13 22  8 26</code></pre>
+</div>
+<div id="discrete-random-variables-and-their-distributions" class="section level2" number="3.4">
+<h2>
+<span class="header-section-number">3.4</span> Discrete random variables and their distributions<a class="anchor" aria-label="anchor" href="#discrete-random-variables-and-their-distributions"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Binomial</li>
+</ol>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">2</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.0001811981</code></pre>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">pbinom</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">2</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.0002012253</code></pre>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">qbinom</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 9</code></pre>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1]  5 13 10 10 12</code></pre>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,size<span class="op">=</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-36-2.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="2" style="list-style-type: decimal">
+<li>The Hypergeometric Distribution</li>
+</ol>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">dhyper</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">2</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.3212879</code></pre>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">phyper</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">2</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.8472481</code></pre>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">qhyper</a></span><span class="op">(</span><span class="fl">0.3</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">rhyper</a></span><span class="op">(</span>nn<span class="op">=</span><span class="fl">10</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 2 0 3 1 2 3 0 3 3 2</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>The Geometric Distribution,let X count the number of failures before the first successes</li>
+</ol>
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">dgeom</a></span><span class="op">(</span><span class="fl">4</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.00128</code></pre>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">pgeom</a></span><span class="op">(</span><span class="fl">4</span>, prob <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.99968</code></pre>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">qgeom</a></span><span class="op">(</span><span class="fl">0.4</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">rgeom</a></span><span class="op">(</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0 0 2 0 0 0 0 0 0 0</code></pre>
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">dgeom</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">dgeom</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-38-2.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="4" style="list-style-type: decimal">
+<li>The Negative Binomial Distribution, let X count the number of failures before r successes</li>
+</ol>
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">dnbinom</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span>   </span></code></pre></div>
+<pre><code>## [1] 0.1045094</code></pre>
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">pnbinom</a></span><span class="op">(</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6846054</code></pre>
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">qnbinom</a></span><span class="op">(</span><span class="fl">0.5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">rnbinom</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1]  2  7 11  5  3  5  8  7  5  2</code></pre>
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">dnbinom</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,size<span class="op">=</span><span class="fl">5</span>,p<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Poisson distributino</li>
+</ol>
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">dpois</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">0</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.09071795</code></pre>
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">ppois</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">10</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.999957</code></pre>
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">qpois</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.9</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 4 3 2 3 1 0 1 0 2 2</code></pre>
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">dpois</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">20</span>,lambda<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span><span class="op">:</span><span class="fl">20</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">ppois</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"s"</span>, lty<span class="op">=</span><span class="fl">1</span>,ylab<span class="op">=</span><span class="st">"F(x)"</span>, main<span class="op">=</span><span class="st">"Poisson approx of binomial"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">pbinom</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">100</span>, <span class="fl">0.01</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"s"</span>,col<span class="op">=</span><span class="fl">2</span>,lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="st">"bottomright"</span>,legend<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Poisson"</span>,<span class="st">"Binomial"</span><span class="op">)</span>,lty<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="6" style="list-style-type: decimal">
+<li>Poisson and normal approximation of binomial probabilities, with estimated parameters</li>
+</ol>
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#P(X&lt;=k)=pbinom(k,n,p)</span></span>
+<span><span class="co">#Poisson approximation: P(X&lt;=k) app ppois(k,np)</span></span>
+<span><span class="co">#Normal approximation: P(X&lt;=k) app pnorm(k,np,npq)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">apprx</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span>, <span class="va">p</span>, <span class="va">R</span> <span class="op">=</span> <span class="fl">1000</span>, <span class="va">k</span> <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">trueval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">pbinom</a></span><span class="op">(</span><span class="va">k</span>, <span class="va">n</span>, <span class="va">p</span><span class="op">)</span> <span class="co"># true binomial probability</span></span>
+<span>  <span class="va">prob.zcc</span> <span class="op">&lt;-</span> <span class="va">prob.zncc</span> <span class="op">&lt;-</span> <span class="va">prob.pois</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>  </span>
+<span>  <span class="va">q</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">-</span><span class="va">p</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">R</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">n</span> <span class="op">*</span> <span class="va">p</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="va">p</span> <span class="op">*</span> <span class="va">q</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">z.cc</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="op">(</span><span class="va">k</span> <span class="op">+</span> <span class="fl">.5</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># with cont. correction</span></span>
+<span>    <span class="va">prob.zcc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">z.cc</span><span class="op">)</span></span>
+<span>    <span class="va">z.ncc</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">k</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># no cont. correction</span></span>
+<span>    <span class="va">prob.zncc</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">z.ncc</span><span class="op">)</span>    </span>
+<span>    <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">n</span> <span class="op">*</span> <span class="va">p</span><span class="op">)</span></span>
+<span>    <span class="va">prob.pois</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">[</span><span class="va">y</span> <span class="op">&lt;=</span> <span class="va">k</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="va">n</span></span>
+<span>  <span class="op">}</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>prob.zcc <span class="op">=</span> <span class="va">prob.zcc</span>, prob.zncc <span class="op">=</span> <span class="va">prob.zncc</span>, </span>
+<span>       prob.pois <span class="op">=</span> <span class="va">prob.pois</span>, trueval <span class="op">=</span> <span class="va">trueval</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">R</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">apprx</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">200</span>, p <span class="op">=</span> <span class="fl">.03</span>, k <span class="op">=</span> <span class="fl">6</span>, R <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="co"># windows(6,5)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">R</span>, <span class="va">out</span><span class="op">$</span><span class="va">prob.pois</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"green"</span>, xlab <span class="op">=</span> <span class="st">"Runs"</span>, </span>
+<span>      main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Simulated Probabilities: "</span>, </span>
+<span>             <span class="va">n</span><span class="op">==</span><span class="fl">200</span>, <span class="st">", "</span>, <span class="va">p</span><span class="op">==</span><span class="fl">0.03</span>, sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      ylab <span class="op">=</span> <span class="st">"Probability"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.3</span>, <span class="fl">.7</span><span class="op">)</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">out</span><span class="op">$</span><span class="va">trueval</span>, col<span class="op">=</span><span class="st">"red"</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">R</span>, <span class="va">out</span><span class="op">$</span><span class="va">prob.zcc</span>, lty <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"purple"</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">R</span>, <span class="va">out</span><span class="op">$</span><span class="va">prob.zncc</span>, lty <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="st">"bottomleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Poisson"</span>, <span class="st">"Normal (with cc)"</span>, </span>
+<span>          <span class="st">"Normal (w/o cc)"</span><span class="op">)</span>,</span>
+<span>        lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"purple"</span>, <span class="st">"orange"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">apprx</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">200</span>, p <span class="op">=</span> <span class="fl">.03</span>, k <span class="op">=</span> <span class="fl">6</span>, R <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="co"># windows(6,5)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">prob.pois</span>, boxwex <span class="op">=</span> <span class="fl">0.25</span>, at <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">.25</span>,</span>
+<span>        col <span class="op">=</span> <span class="st">"green"</span>,</span>
+<span>        main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Approximating Binomial Probability: "</span>, </span>
+<span>                                <span class="va">n</span><span class="op">==</span><span class="fl">200</span>, <span class="st">", "</span>, <span class="va">p</span><span class="op">==</span><span class="fl">0.03</span>, sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        ylab <span class="op">=</span> <span class="st">"Probablity"</span>, </span>
+<span>        ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">trueval</span> <span class="op">-</span> <span class="fl">0.2</span>, <span class="va">out</span><span class="op">$</span><span class="va">trueval</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">prob.zcc</span>, boxwex <span class="op">=</span> <span class="fl">0.25</span>, at <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">0</span>, add <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>         col <span class="op">=</span> <span class="st">"purple"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">prob.zncc</span>, boxwex <span class="op">=</span> <span class="fl">0.25</span>, at <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">0.25</span>, add <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>         col <span class="op">=</span> <span class="st">"orange"</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">out</span><span class="op">$</span><span class="va">trueval</span>, col <span class="op">=</span> <span class="st">"red"</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Poisson"</span>, <span class="st">"Normal (with cc)"</span>, <span class="st">"Normal (w/o cc)"</span><span class="op">)</span>, </span>
+<span>           fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"purple"</span>, <span class="st">"orange"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="leaning-note_files/figure-html/unnamed-chunk-42-2.png" width="672" style="display: block; margin: auto;">
+## Random variables and their distribution</div>
+<ol style="list-style-type: decimal">
+<li>Binomial</li>
+</ol>
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">dbinom</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">2</span>,size<span class="op">=</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.1209324</code></pre>
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">pbinom</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">2</span>,size<span class="op">=</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.1672898</code></pre>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">qbinom</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.4</span>,size<span class="op">=</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 3 5 2 1 4</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>The Hypergeometric Distribution</li>
+</ol>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">dhyper</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">2</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.3212879</code></pre>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">phyper</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">2</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.8472481</code></pre>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">qhyper</a></span><span class="op">(</span><span class="fl">0.3</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/stats/Hypergeometric.html">rhyper</a></span><span class="op">(</span>nn<span class="op">=</span><span class="fl">10</span>, m<span class="op">=</span><span class="fl">10</span>, n<span class="op">=</span><span class="fl">30</span>, k<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 4 1 1 1 2 2 1 1 3 2</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>The Geometric Distribution,let X count the number of failures before the first successes</li>
+</ol>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">dgeom</a></span><span class="op">(</span><span class="fl">4</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.00128</code></pre>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">pgeom</a></span><span class="op">(</span><span class="fl">4</span>, prob <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.99968</code></pre>
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">qgeom</a></span><span class="op">(</span><span class="fl">0.4</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">rgeom</a></span><span class="op">(</span><span class="fl">10</span>,prob<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0 1 0 0 0 1 0 0 1 0</code></pre>
+<p>4.The Negative Binomial Distribution, let X count the number of failures before r successes</p>
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">dnbinom</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span>   </span></code></pre></div>
+<pre><code>## [1] 0.1045094</code></pre>
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">pnbinom</a></span><span class="op">(</span><span class="fl">5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6846054</code></pre>
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">qnbinom</a></span><span class="op">(</span><span class="fl">0.5</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/NegBinomial.html">rnbinom</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span>,size<span class="op">=</span><span class="fl">3</span>,prob<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1]  2  5  1  1 11  4  2  1  7 14</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Poisson distributino</li>
+</ol>
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">dpois</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">0</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.09071795</code></pre>
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">ppois</a></span><span class="op">(</span>q<span class="op">=</span><span class="fl">10</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.999957</code></pre>
+<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">qpois</a></span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.9</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">10</span>,lambda<span class="op">=</span><span class="fl">2.4</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 2 4 4 6 0 3 3 2 2 1</code></pre>
+<div class="sourceCode" id="cb180"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span> <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.01</span>, <span class="fl">5</span>, <span class="fl">0.01</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">ppois</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"s"</span>, ylab<span class="op">=</span><span class="st">"F(x)"</span>, main<span class="op">=</span><span class="st">"Poisson(1) CDF"</span><span class="op">)</span></span>
+<span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">pbinom</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">100</span>, <span class="fl">0.01</span><span class="op">)</span>,type<span class="op">=</span><span class="st">"s"</span>, ylab<span class="op">=</span><span class="st">"F(x)"</span>,main<span class="op">=</span><span class="st">"Binomial(100, 0.01) CDF"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="6" style="list-style-type: decimal">
+<li>Normal distribution</li>
+</ol>
+<div class="sourceCode" id="cb181"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="fl">0</span>,mean<span class="op">=</span><span class="fl">0</span>,sd<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.3989423</code></pre>
+<div class="sourceCode" id="cb183"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.5</code></pre>
+<div class="sourceCode" id="cb185"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">/</span><span class="fl">100</span>,lower.tail<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 1.959964</code></pre>
+<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span>,mean<span class="op">=</span><span class="fl">1</span>,sd<span class="op">=</span><span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1]  0.9136374  0.5886706 -1.1184606 -0.7624067  2.5011198  2.6856772
+##  [7]  3.0430825  0.6944923  1.5424163  1.6967752</code></pre>
+<p>some plots</p>
+<div class="sourceCode" id="cb189"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span>, length <span class="op">=</span> <span class="fl">401</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">'l'</span><span class="op">)</span> <span class="co"># N(0, 1)</span></span>
+<span><span class="co"># N(1, 1.5^2):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="fl">1</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span>, lty <span class="op">=</span> <span class="st">'dashed'</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length<span class="op">=</span><span class="fl">401</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">u</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span>, <span class="st">'l'</span><span class="op">)</span></span>
+<span><span class="co"># lower.tail = FALSE gives q(1-u)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">u</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="va">u</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, lty <span class="op">=</span> <span class="st">'dashed'</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">n</span><span class="op">&lt;-</span><span class="fl">1000</span></span>
+<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">xh</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">x</span>, probability <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">xh</span></span></code></pre></div>
+<pre><code>## $breaks
+##  [1] -3.5 -3.0 -2.5 -2.0 -1.5 -1.0 -0.5  0.0  0.5  1.0  1.5  2.0  2.5  3.0  3.5
+## 
+## $counts
+##  [1]   2   2  21  45  86 137 230 174 153  88  44  12   5   1
+## 
+## $density
+##  [1] 0.004 0.004 0.042 0.090 0.172 0.274 0.460 0.348 0.306 0.176 0.088 0.024
+## [13] 0.010 0.002
+## 
+## $mids
+##  [1] -3.25 -2.75 -2.25 -1.75 -1.25 -0.75 -0.25  0.25  0.75  1.25  1.75  2.25
+## [13]  2.75  3.25
+## 
+## $xname
+## [1] "x"
+## 
+## $equidist
+## [1] TRUE
+## 
+## attr(,"class")
+## [1] "histogram"</code></pre>
+<div class="sourceCode" id="cb193"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">z</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">0.01</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">z</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">z</span>, y <span class="op">=</span> <span class="va">y</span>, col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;"></div>
+<ol start="7" style="list-style-type: decimal">
+<li>exponential distribution</li>
+</ol>
+<div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">q</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.2</span>,<span class="fl">.5</span>,<span class="fl">.1</span>,<span class="fl">.1</span>,<span class="fl">.1</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">dexp</a></span><span class="op">(</span><span class="va">x</span>, rate <span class="op">=</span> <span class="fl">1</span>, log <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0.0000000 0.6467677 0.2709752 0.6514087 0.4451820 0.0000000 0.0000000
+##  [8] 0.3937035 0.0000000 0.0000000 0.0000000 0.8142085 0.2947052 0.7195265
+## [15] 0.4658846 0.5511078 0.0000000 0.9246197 0.6969978 0.0000000 0.0000000
+## [22] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+## [29] 0.1963103 0.0000000
+##  [ reached getOption("max.print") -- omitted 970 entries ]</code></pre>
+<div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">pexp</a></span><span class="op">(</span><span class="va">q</span>, rate <span class="op">=</span> <span class="fl">1</span>, lower.tail <span class="op">=</span> <span class="cn">TRUE</span>, log.p <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.18126925 0.39346934 0.09516258 0.09516258 0.09516258</code></pre>
+<div class="sourceCode" id="cb198"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">qexp</a></span><span class="op">(</span><span class="va">p</span>, rate <span class="op">=</span> <span class="fl">1</span>, lower.tail <span class="op">=</span> <span class="cn">TRUE</span>, log.p <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.6931472</code></pre>
+<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span><span class="op">(</span><span class="va">n</span>, rate <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0.005536359 0.207342347 0.599133480 1.170997404 0.290882872 0.177673159
+##  [7] 1.246424135 0.175841576 0.041281463 0.885665916 0.018615517 0.615877023
+## [13] 1.534591656 3.264871947 1.153509116 0.796585224 1.705156151 0.473271821
+## [19] 1.314082502 1.282413484 2.387044230 2.386808468 0.748855574 0.488763332
+## [25] 1.389614921 1.573671862 0.485501722 1.378829610 0.805851386 0.522162373
+##  [ reached getOption("max.print") -- omitted 970 entries ]</code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Uniform distribution</li>
+</ol>
+<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">dunif</a></span><span class="op">(</span><span class="va">x</span>, min<span class="op">=</span><span class="fl">0</span>, max<span class="op">=</span><span class="fl">1</span>, log <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0 1 0 1 1 0 0 1 0 0 0 1 0 1 1 1 0 1 1 0 0 0 0 0 0 0 0 0 0 0
+##  [ reached getOption("max.print") -- omitted 970 entries ]</code></pre>
+<div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">punif</a></span><span class="op">(</span><span class="va">q</span>, min<span class="op">=</span><span class="fl">0</span>, max<span class="op">=</span><span class="fl">1</span>, lower.tail <span class="op">=</span> <span class="cn">TRUE</span>, log.p <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.2 0.5 0.1 0.1 0.1</code></pre>
+<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">qunif</a></span><span class="op">(</span><span class="va">p</span>, min<span class="op">=</span><span class="fl">0</span>, max<span class="op">=</span><span class="fl">1</span>, lower.tail <span class="op">=</span> <span class="cn">TRUE</span>, log.p <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code>## [1] 0.5</code></pre>
+<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">n</span>, min<span class="op">=</span><span class="fl">0</span>, max<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<pre><code>##  [1] 0.77693961 0.15614217 0.33720060 0.79972727 0.10672545 0.62887067
+##  [7] 0.17407200 0.23192336 0.08219918 0.35697951 0.07556067 0.39823420
+## [13] 0.27835237 0.63720385 0.84284525 0.18321810 0.14768553 0.21428431
+## [19] 0.87226437 0.89715272 0.63679677 0.49365256 0.75080120 0.06441163
+## [25] 0.71274235 0.78788034 0.58013062 0.52959147 0.58936567 0.84903366
+##  [ reached getOption("max.print") -- omitted 970 entries ]</code></pre>
+<ol start="9" style="list-style-type: decimal">
+<li>other distribution</li>
+</ol>
+<p><a href="http://zoonek2.free.fr/UNIX/48_R/07.html" class="uri">http://zoonek2.free.fr/UNIX/48_R/07.html</a></p>
+</div>
+<div id="exponential-distribution" class="section level2" number="3.5">
+<h2>
+<span class="header-section-number">3.5</span> exponential distribution<a class="anchor" aria-label="anchor" href="#exponential-distribution"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#cumulative distribution function</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">pexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">1</span>, lwd<span class="op">=</span><span class="fl">3</span>,</span>
+<span>      main<span class="op">=</span><span class="st">'Exponential Probability Distribution Function'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">pexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">2</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">2</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">pexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">5</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">3</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">3</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">pexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">10</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">4</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">4</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, xjust<span class="op">=</span><span class="fl">1</span>,</span>
+<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'rate=0.5'</span>,<span class="st">'rate=1'</span>, <span class="st">'rate=2'</span>,<span class="st">'rate=10'</span><span class="op">)</span>,</span>
+<span>       lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span>,</span>
+<span>       col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-54-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#density</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">dexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">1</span>, lwd<span class="op">=</span><span class="fl">3</span>,</span>
+<span>      main<span class="op">=</span><span class="st">'Exponential Probability Distribution Function'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">dexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">1</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">2</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">2</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">dexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">5</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">3</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">3</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">dexp</a></span><span class="op">(</span><span class="va">x</span>,rate<span class="op">=</span><span class="fl">10</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span><span class="op">)</span>, col<span class="op">=</span><span class="fl">4</span>, lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">4</span>,</span>
+<span>      add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, xjust<span class="op">=</span><span class="fl">1</span>,</span>
+<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'rate=0.5'</span>,<span class="st">'rate=1'</span>, <span class="st">'rate=2'</span>,<span class="st">'rate=10'</span><span class="op">)</span>,</span>
+<span>       lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
+<span>       col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-55-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">###normal</span></span>
+<span><span class="co">#cumulative distribution function</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">'red'</span>, lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/title.html">title</a></span><span class="op">(</span>main<span class="op">=</span><span class="st">'Cumulative gaussian distribution function'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">x</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">'green'</span>, lwd<span class="op">=</span><span class="fl">3</span>,add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">x</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,  xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">'black'</span>, lwd<span class="op">=</span><span class="fl">3</span>,add<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, xjust<span class="op">=</span><span class="op">-</span><span class="fl">0.5</span>,</span>
+<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'standard norm'</span>, <span class="st">'normal(1,1)'</span>,<span class="st">'normal(1,2)'</span><span class="op">)</span>,</span>
+<span>       lwd<span class="op">=</span><span class="fl">2</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'green'</span>,<span class="st">'black'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#density</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">'red'</span>, lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, add<span class="op">=</span><span class="cn">T</span>, col<span class="op">=</span><span class="st">'green'</span>, lty<span class="op">=</span><span class="fl">2</span>, lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, add<span class="op">=</span><span class="cn">T</span>, col<span class="op">=</span><span class="st">'black'</span>, lty<span class="op">=</span><span class="fl">3</span>, lwd<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span><span class="st">'usr'</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>, xjust<span class="op">=</span><span class="fl">1</span>,</span>
+<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'standard normal'</span>, <span class="st">'normal(1,1)'</span>,<span class="st">'normal(1,2)'</span><span class="op">)</span>,</span>
+<span>       lwd<span class="op">=</span><span class="fl">2</span>, lty<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>,</span>
+<span>       col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'red'</span>,<span class="st">'green'</span>,<span class="st">'black'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="leaning-note_files/figure-html/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">###mixture of normal</span></span>
+<span> </span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span>    <span class="co"># Means</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.3</span>,<span class="fl">.4</span>,<span class="fl">.3</span><span class="op">)</span>  <span class="co"># Probabilities</span></span>
+<span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>   <span class="co"># Standard deviations</span></span>
+<span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>       col <span class="op">=</span> <span class="st">"green"</span>, lwd <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>       xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.23</span><span class="op">)</span>,</span>
+<span>       main <span class="op">=</span> <span class="st">"The three gaussian distributions in our mixture"</span>,</span>
+<span>       xlab <span class="op">=</span> <span class="st">""</span>, ylab <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span> <span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>       col<span class="op">=</span><span class="st">"red"</span>, lwd<span class="op">=</span><span class="fl">3</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span> <span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>       col<span class="op">=</span><span class="st">"blue"</span>, lwd<span class="op">=</span><span class="fl">3</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html">curve</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">+</span><span class="va">p</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean<span class="op">=</span><span class="va">m</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, sd<span class="op">=</span><span class="va">s</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>,col<span class="op">=</span><span class="st">"black"</span>, lwd<span class="op">=</span><span class="fl">3</span>, add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="leaning-note_files/figure-html/unnamed-chunk-58-1.png" width="672" style="display: block; margin: auto;"><a href="http://personal.kenyon.edu/hartlaub/MellonProject/Bivariate2.html" class="uri">http://personal.kenyon.edu/hartlaub/MellonProject/Bivariate2.html</a></p>
+<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">### bivariate normal density with matlab</span></span>
+<span></span>
+<span></span>
+<span><span class="co">###Plot of mixtures of bivariate normal with R</span></span>
+<span></span>
+<span><span class="co"># install.packages("rgl")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmurdoch/rgl">rgl</a></span><span class="op">)</span></span>
+<span> </span>
+<span><span class="va">dnorm2d</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">mu1</span>,<span class="va">mu2</span>,<span class="va">sigma1</span>,<span class="va">sigma2</span>,<span class="va">rho</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">xoy</span> <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">mu1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="va">sigma1</span><span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">rho</span> <span class="op">*</span> <span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">mu1</span><span class="op">)</span><span class="op">/</span><span class="va">sigma1</span> <span class="op">*</span> <span class="op">(</span><span class="va">y</span><span class="op">-</span><span class="va">mu2</span><span class="op">)</span><span class="op">/</span><span class="va">sigma2</span> <span class="op">+</span> <span class="op">(</span><span class="va">y</span><span class="op">-</span><span class="va">mu2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">/</span><span class="va">sigma2</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">rho</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">density</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">xoy</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">*</span><span class="va">sigma1</span><span class="op">*</span><span class="va">sigma2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">rho</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">density</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="va">y</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">5</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ff1</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="fl">0.5</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">+</span><span class="fl">0.5</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">ff2</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="fl">0.5</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">+</span><span class="fl">0.5</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">0.5</span><span class="op">)</span><span class="op">}</span></span>
+<span></span>
+<span></span>
+<span><span class="va">ff3</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">{</span><span class="fl">0.3</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">+</span><span class="fl">0.7</span><span class="op">*</span><span class="fu">dnorm2d</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">2.5</span>,<span class="fl">2.5</span>,<span class="fl">1.75</span>,<span class="fl">1.75</span>,<span class="fl">0</span><span class="op">)</span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/open3d.html">open3d</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># This will open a small window where you can plot 3D figures on.</span></span>
+<span></span>
+<span><span class="va">z</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/outer.html">outer</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">ff1</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/persp3d.html">persp3d</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">z</span>,col<span class="op">=</span><span class="st">"green"</span>,main<span class="op">=</span><span class="st">"ff1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/open3d.html">open3d</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">z</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/outer.html">outer</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">ff2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/persp3d.html">persp3d</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">z</span>,col<span class="op">=</span><span class="st">"green"</span>,main<span class="op">=</span><span class="st">"ff2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/open3d.html">open3d</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">z</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/outer.html">outer</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">ff3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/persp3d.html">persp3d</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="va">z</span>,col<span class="op">=</span><span class="st">"green"</span>,main<span class="op">=</span><span class="st">"ff3"</span><span class="op">)</span></span></code></pre></div>
+
+</div>
+</div>
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="using-vegan.html"><span class="header-section-number">2</span> Vegan 使用技巧</a></div>
+<div class="next"><a href="data-mining-practise.html"><span class="header-section-number">4</span> 关于《数据挖掘实战》</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#probability-statistics"><span class="header-section-number">3</span> 概率论和数理统计</a></li>
+<li>
+<a class="nav-link" href="#roll-the-dice"><span class="header-section-number">3.1</span> 掷骰子</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#efrons-dice"><span class="header-section-number">3.1.1</span> Efron’s dice</a></li></ul>
+</li>
+<li><a class="nav-link" href="#buffons-needle"><span class="header-section-number">3.2</span> Buffon’s needle</a></li>
+<li><a class="nav-link" href="#sample---sampling-from-a-finite-set"><span class="header-section-number">3.3</span> sample() - sampling from a finite set</a></li>
+<li><a class="nav-link" href="#discrete-random-variables-and-their-distributions"><span class="header-section-number">3.4</span> Discrete random variables and their distributions</a></li>
+<li><a class="nav-link" href="#exponential-distribution"><span class="header-section-number">3.5</span> exponential distribution</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>数据科学学习笔记</strong>" was written by 高春辉. It was last built on 2022-07-22.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>
